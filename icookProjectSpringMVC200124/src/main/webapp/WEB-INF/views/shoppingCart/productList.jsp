@@ -103,9 +103,12 @@
 <script type="text/javascript">
 
 		$(document).ready(function() {
-			console.log("Hello");console.log("Hello");
-			console.log("Hello");console.log("Hello");
-			console.log("Hello");console.log("Hello");
+			console.log("Hello");
+			console.log("Hello");
+			console.log("Hello");
+			console.log("Hello");
+			console.log("Hello");
+			console.log("Hello");
 			
 			var curWwwPath=window.document.location.href;
 			console.log(curWwwPath);
