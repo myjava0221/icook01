@@ -106,6 +106,13 @@
 			console.log("Hello");
 			console.log("Hello");
 			
+			console.log("Hello");
+			console.log;
+			console.log("Hello");("Hello");
+			
+			
+			
+			
 			var curWwwPath=window.document.location.href;
 			console.log(curWwwPath);
 			var pathName=window.document.location.pathname;
