@@ -89,7 +89,7 @@
 					</c:forEach>
 			<form action="${pageContext.request.contextPath}/ShoppingCar/OrderCheck" method="GET">		
 			<tr>
-				<td colspan="7"><input type="submit" id="submit" value="確定購買" />
+				<td colspan="9"><input type="submit" id="submit" value="確定購買" />
 			</form>
 		</table>
 </body>
