@@ -105,13 +105,7 @@
 		$(document).ready(function() {
 			console.log("Hello");
 			console.log("Hello");
-			
 			console.log("Hello");
-			console.log;
-			console.log("Hello");("Hello");
-			
-			
-			
 			
 			var curWwwPath=window.document.location.href;
 			console.log(curWwwPath);
