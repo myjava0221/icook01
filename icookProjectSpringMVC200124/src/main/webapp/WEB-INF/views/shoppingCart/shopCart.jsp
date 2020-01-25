@@ -53,7 +53,7 @@
 				<th class="trHead">刪除
 				<c:forEach items="${ShoppingCart.content}" var="cart"
 						varStatus="vs">
-						<tr>
+						<tr id="trIndex${vs.index}">
 							<td>${cart.value.productId}
 							<td>${cart.value.describe}
 							<td id="unitPrice${vs.index}">NT<fmt:formatNumber
@@ -61,7 +61,6 @@
 							<td id="discount${vs.index}">${cart.value.discount}
 							<td id="onSale${vs.index}">NT<fmt:formatNumber pattern="#0" value="${cart.value.onSale}" type="currency" /> 
 							<td>
-								<form action="${pageContext.request.contextPath}/shoppingCart/shopCart" method="post">
 								<div class="list-cart-notice-wrap">
 									<div class="item-qty-control">
 										<button type="button" title="減少" id="minus${vs.index}"
@@ -81,11 +80,10 @@
 									type="currency" /> 
 <!-- 							<form action="../UpdateICookItem" method="post"> -->
 <%-- 								<td><button class="delete" id="del${vs.index}">刪除</button> --%>
-							<td><button name="cmd" value="MOD">修改</button>
-							<td><button name="cmd" id="DEL"  value="DEL">刪除</button>
-									<input type="hidden" name="mapKey" value="${cart.key}"/>
-									<input type="hidden" name="listIndex" value="${vs.index}" />
-							</form>
+							<td><button name="cmd" class="MOD" id="MOD${vs.index}"  value="MOD">修改</button>
+							<td><button name="cmd" class="DEL" id="DEL${vs.index}"  value="DEL">刪除</button>
+									<input type="hidden" id="mapKey${vs.index}" name="mapKey${vs.index}" value="${cart.key}"/>
+									<input type="hidden" id="listIndex${vs.index}" name="listIndex${vs.index}" value="${vs.index}" />
 					</c:forEach>
 			<form action="${pageContext.request.contextPath}/ShoppingCar/OrderCheck" method="GET">		
 			<tr>
@@ -108,7 +106,7 @@
 			}
 			
 			$("#qty" + index).val(qty);
-			$("#subTotal" + index).text(qty * onSale  + "元");
+			$("#subTotal" + index).text(qty * onSale);
 		})
 
 		$(".item-qty-button-minus").click(function() {
@@ -121,45 +119,74 @@
 				qty = Number(qty) - 1;
 			}
 			$("#qty" + index).val(qty);
-			$("#subTotal" + index).text(qty * onSale + "元");
+			$("#subTotal" + index).text(qty * onSale);
 		})
 		
-		//以單價做計算時
-// 		$(".item-qty-button-plus").click(function() {
-// 			var id = $(this).attr("id");
-// 			var index = id.substring(4);
-// 			var unitPriceId = "#unitPrice" + index;
-// 			var unitPrice = $(unitPriceId).text();
-// 			unitPrice = unitPrice.substring(2);
-// 			var qtyId = "#qty" + index;
-// 			var qty = $(qtyId).val();
-// 			var subTotalId = "#subTotal" + index;
-// 			if (qty < 99) {
-// 				qty = Number(qty) + 1;
-// 			}
-// 			$(qtyId).val(qty);
-// 			$(subTotalId).text(qty * unitPrice + "元");
-// 		})
-
-// 		$(".item-qty-button-minus").click(function() {
-// 			var id = $(this).attr("id");
-// 			var index = id.substring(5);
-// 			var unitPriceId = "#unitPrice" + index;
-// 			var unitPrice = $(unitPriceId).text();
-// 			unitPrice = unitPrice.substring(2);
-// 			var qtyId = "#qty" + index;
-// 			var qty = $(qtyId).val();
-// 			var subTotalId = "#subTotal" + index;
-
-// 			if (qty > 1) {
-// 				qty = Number(qty) - 1;
-// 			}
-// 			$(qtyId).val(qty);
-// 			$(subTotalId).text(qty * unitPrice + "元");
-// 		})
 
 		$("#submit").click(function() {
 			if(confirm("確定購買 ?") ) {
+				return true;
+			}else{
+				return false;
+			}
+		})
+		
+
+// 		修改商品
+		$(".MOD").click(function() {
+			var id = $(this).attr("id");
+			var index = index = id.replace("MOD","");
+			var updateProducts = 
+			{
+				mapKey:$("#mapKey"+index).val(),
+				cmd   :$("#MOD"+index).val(),
+				qty	  :$("#qty"+index).val(),
+			}
+			if(confirm("確定修改嗎 ?") ) {
+				$.ajax({
+					url:"${pageContext.request.contextPath}/shoppingCart/shopCart?",//後端controller的URL
+					type:"POST",//用POST的方式
+					dataType: "text",
+					data: updateProducts,
+					success:function(data){   //成功後回傳的資料data,目前沒用到不理他
+					},
+					error:function(err){ //發生伺服器404、500、304等錯誤時會用此function處理,err封裝錯誤訊息
+						console.log(err);
+					}
+				});
+				return true;
+			}else{
+				return false;
+			}
+		})
+		
+		
+	//刪除商品
+		$(".DEL").click(function() {
+			var id = $(this).attr("id");
+			var index = index = id.replace("DEL","");
+			console.log(index);
+			
+			var deleteProducts = 
+			{
+				mapKey:$("#mapKey"+index).val(),
+				cmd   :$("#DEL"+index).val(),
+			}
+			
+			if(confirm("確定刪除此商品 ?") ) {
+				$.ajax({
+					url:"${pageContext.request.contextPath}/shoppingCart/shopCart?",//後端controller的URL
+					type:"POST",//用POST的方式
+					dataType: "text",
+					data: deleteProducts,
+					success:function(data){   //成功後回傳的資料data,目前沒用到不理他
+					},
+					error:function(err){ //發生伺服器404、500、304等錯誤時會用此function處理,err封裝錯誤訊息
+						console.log(err);
+					}
+				});
+				
+				$("#trIndex"+index).remove();
 				return true;
 			}else{
 				return false;

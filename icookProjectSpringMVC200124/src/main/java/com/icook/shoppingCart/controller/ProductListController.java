@@ -200,8 +200,7 @@ public class ProductListController {
 			cart.deleteProduct(pid_pty); // 刪除購物車內的某項商品
 			return "redirect:shopCart";
 		} else if (cmd.equalsIgnoreCase("MOD")) {
-			String index = request.getParameter("listIndex");
-			String newQtyStr = request.getParameter("qty" + index);
+			String newQtyStr = request.getParameter("qty");
 			int newQty = Integer.parseInt(newQtyStr.trim());
 			cart.modifyQty(pid_pty, newQty); // 修改某項商品的數項
 			return "redirect:shopCart";
