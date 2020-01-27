@@ -51,7 +51,7 @@
 				<th class="trHead">小計
 				<th class="trHead">修改
 				<th class="trHead">刪除
-				<c:forEach items="${ShoppingCart.content}" var="cart"
+				<c:forEach  items="${ShoppingCart.content}" var="cart"
 						varStatus="vs">
 						<tr id="trIndex${vs.index}">
 							<td>${cart.value.productId}
@@ -71,15 +71,11 @@
 										<button type="button" title="增加" id="plus${vs.index}"
 											class="item-qty-button item-qty-button-plus">+</button>
 									</div>
-									<!-- 							<div class="list-cart-notice rt-text-medium rt-text-error"> -->
-									<!-- 							</div> -->
 								</div>
 							</td>
 							<td id="subTotal${vs.index}"><fmt:formatNumber pattern="#0"
 									value="${cart.value.unitPrice * cart.value.qty}"
 									type="currency" /> 
-<!-- 							<form action="../UpdateICookItem" method="post"> -->
-<%-- 								<td><button class="delete" id="del${vs.index}">刪除</button> --%>
 							<td><button name="cmd" class="MOD" id="MOD${vs.index}"  value="MOD">修改</button>
 							<td><button name="cmd" class="DEL" id="DEL${vs.index}"  value="DEL">刪除</button>
 									<input type="hidden" id="mapKey${vs.index}" name="mapKey${vs.index}" value="${cart.key}"/>
