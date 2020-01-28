@@ -21,15 +21,18 @@
 <meta name="keywords"
 	content="Truckage Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
 
-<link href="${pageContext.request.contextPath}/css/bootstrap.css"
-	rel="stylesheet" type="text/css" media="all" />
 <link href="${pageContext.request.contextPath}/css/style.css"
 	rel="stylesheet" type="text/css" media="all" />
+<link href="${pageContext.request.contextPath}/css/bootstrap.css"
+	rel="stylesheet" type="text/css" media="all" />
 <link href="${pageContext.request.contextPath}/css/shoppingCart.css"
+	rel="stylesheet" type="text/css" media="all" />
+<link href="${pageContext.request.contextPath}/css/jquery-ui.css"
 	rel="stylesheet" type="text/css" media="all" />
 <!-- <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script> -->
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="${pageContext.request.contextPath}/js/bootstrap.js"></script>
 <!-- //js -->
 <!-- load-more -->
 <link
@@ -41,6 +44,8 @@
 </head>
 <body>
 	<jsp:include page="/WEB-INF/views/fragment/TopNav.jsp" />
+	
+	
 	<!-- 搜尋功能 -->
 	<div class="container align-items-center">
 		<fieldset >
@@ -111,9 +116,7 @@
   		</ul>
 	</div>
 	<!-- for bootstrap working -->
-<script src="${pageContext.request.contextPath}/js/bootstrap.js"></script>
 <script type="text/javascript">
-
 $(document).ready(function() {
 		var curWwwPath=window.document.location.href;
 		console.log(curWwwPath);
@@ -129,39 +132,27 @@ $(document).ready(function() {
 		
 // 		======================p分頁p==========================
 		
-		var pageSet = 8;//每個分頁顯示的商品數量
+		var pageSet = 4;//每個分頁顯示的商品數量
 		var pageNumber = Math.ceil("${proCount}"/pageSet);
 		showPagePros(0);//剛載入就顯示此頁商品數量
 
-		var pageList='<li class=\"pagefirst\" id=\"li0\"><button class=\"btLi\" id=\"btLi0\">第一頁</button></li>';
+		var pageList='<li class=\"pagefirst\" id=\"li0\"><button class=\"btLi ui-button ui-widget ui-corner-all \" id=\"btLi0\">第一頁</button></li>';
 		var j=0;
 		for(var i=0;i<pageNumber;i++){
 			console.log("i="+i);
 // 			url= "${pageContext.request.contextPath}/shoppingCart/productList?page="+i;
 // 			pageList+='<li class=\"listPaper\" id=\"li'+i+'\"><a href="<spring:url value="'+url+'"/>">'+i+'</a></li>';
-			pageList+='<li class=\"listPaper\" id=\"li'+i+'\"><button class=\"btLi\" id=\"btLi'+i+'\">'+(i+1)+'</button></li>';
+			pageList+='<li class=\"listPaper\" id=\"li'+i+'\"><button class=\"btLi ui-button ui-widget ui-corner-all \" id=\"btLi'+i+'\">'+(i+1)+'</button></li>';
 			j=i;
 		}
 		console.log("j:"+j);
-		pageList+='<li class=\"pageFinal\" id=\"li'+j+'\"><button class=\"btLi\" id=\"btLi'+j+'\">末頁</button></li>';
+		pageList+='<li class=\"pageFinal\" id=\"li'+j+'\"><button class=\"btLi ui-button ui-widget ui-corner-all \" id=\"btLi'+j+'\">末頁</button></li>';
 		$(".pager").html(pageList);
 		
 		$(".btLi").click(function(){
 			var id = $(this).attr("id"); 
 			var page = Number(id.replace("btLi",""));
-			
-			$.ajax({
-				url:"",
-				type:"POST",
-				cache: false,
-				dataType: "text",
-				success:function(data){
-					showPagePros(page);
-				},
-				error:function(err){ 
-					console.log(err);
-				}
-			});
+			doAjax(showPagePros(page));
 		})
 		
 		$.each($(".col-md-3"), function( index, value ) {
@@ -198,29 +189,45 @@ $(document).ready(function() {
 			console.log(dataJSONString);
 			//語法:JSON.parse(JSON格式字串or陣列) = 將JSON格式字串or陣列轉換成JSON物件
 			var dataJSONObject = JSON.parse(dataJSONString);
+			var url="${pageContext.request.contextPath}/shoppingCart/addToCar?";
 			console.log(dataJSONObject);
+			doAjax(url,dataJSONObject);
+// 			特別注意!!在控制器@GetMapping的productList_get一定要建立ShoppingCart的session(第46行)
+// 			否則就算有註解,${ShoppingCart}雖然不會有事,但${ShoppingCart.itemNumber}一定會死給你看,千萬要小心
+			console.log("${ShoppingCart}");
+			console.log("${ShoppingCart.itemNumber}");
+			$("#cartNo").load("");
+		})
+		
+// 		每x毫秒刷新頁面
+		function refresh(){ 
+			    //update src attribute with a cache buster query 
+			    setTimeout("refresh();",10) 
+			} 
+		
+// 		使用ajax不刷新頁面執行某功能
+		function doAjax(targetUrl,inputData,outputData){
 			$.ajax({
-				url:"${pageContext.request.contextPath}/shoppingCart/addToCar?",//後端controller的URL
+				url:targetUrl,//後端controller的URL
 				type:"POST",//用POST的方式
 				cache: false,   //是否暫存
 // 				contentType: 'application/json; charset=UTF-8',//傳送json格式資料給server時
 // 				dataType: "json",
 				dataType: "text",
-				data: dataJSONObject,
+				data: inputData,
 // 				data: { key: value }, 
 // 							傳送給後端的資料,格式為Key/Value  
 				success:function(data){   //成功後回傳的資料data,目前沒用到不理他
 // 					showNames(data);
-					console.log(data);
+// 					console.log(data);
+					outputData;
 				},
 				error:function(err){ //發生伺服器404、500、304等錯誤時會用此function處理,err封裝錯誤訊息
 					console.log(err);
 				}
 			});
-		})	
-// 		function showNames(data){
-// 			alert(data);
-// 		}
+		}
+		
 })
 </script>
 </body>

@@ -49,6 +49,8 @@ public class ShoppingCart {
 		   return 0;
 		}
 	}
+	
+	//購物車商品數量
 	public int getItemNumber(){   // ShoppingCart.itemNumber
 		return cart.size();
 	}

@@ -150,6 +150,9 @@
 						console.log(err);
 					}
 				});
+				
+			//按下修改or刪除時，重新載入此頁，更新購物車數量
+				$("#cartNo").load("");
 				return true;
 			}else{
 				return false;
@@ -183,6 +186,8 @@
 				});
 				
 				$("#trIndex"+index).remove();
+			//按下修改or刪除時，重新載入此頁，更新購物車數量
+				$("#cartNo").load("");
 				return true;
 			}else{
 				return false;

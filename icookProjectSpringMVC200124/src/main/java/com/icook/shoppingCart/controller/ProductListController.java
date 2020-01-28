@@ -35,14 +35,22 @@ public class ProductListController {
 		this.service = service;
 	}
 	
-	@GetMapping(value = "/test")
-	public String test() {
-		return "fragment/test";
-	}
+//	@PostMapping(value = "fragment/TopNav")
+//	public String test() {
+//		return "fragment/TopNav";
+//	}
 	
 	@GetMapping(value = "shoppingCart/productList")
 	public String productList_get(Model model, HttpServletRequest request) {
 		System.out.println("進入controller1");
+		HttpSession session = request.getSession(false);
+		ShoppingCart cart = (ShoppingCart) session.getAttribute("ShoppingCart");
+		System.out.println("cart0:" + cart);
+		if (cart == null) {
+			cart = new ShoppingCart();
+			System.out.println("cart0s:" + cart);
+			session.setAttribute("ShoppingCart", cart);
+		}
 		String productName = request.getParameter("productName");
 		List<ProductBean> products = new LinkedList<ProductBean>();
 		List<String[]> prosImg = new LinkedList<String[]>();
@@ -221,7 +229,6 @@ public class ProductListController {
 		   String queryVariable="";
 	       for(int i=0;i<HexString.length();i+=2) {
 	    	   	queryVariable += "%"+HexString.substring(i,i+2);
-	        	System.out.println(queryVariable);
 	        }
 		   return queryVariable;
 		}
