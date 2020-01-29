@@ -71,11 +71,11 @@
 <!-- 	<p>4第二層迴圈 forEach取producTypetBean的資料</p> -->
 		<c:forEach items="${prosList}" var="pros" varStatus="vs">
 			<c:set var="prodsSet" value="${pros.type}"></c:set>
-<%-- 			<c:set var="pros" value="${pros}"></c:set> --%>
+			<c:set var="pros" value="${pros}" scope="session"></c:set>
 			<c:set var="imgArray" value="${ImgList[vs.index]}"></c:set>
 			
 			<c:forEach items="${prodsSet}" var="pbt" varStatus="vs2">
-<!-- 			proCount是紀錄商品數量,並作為索引代號 -->
+<!-- 			紀錄商品數量,並作為索引代號 -->
 			<c:set var="proCount" value="${proCount+1}" />
 			<div class="products col-md-3 top_brand_left" id="divTop${proCount}">
 			<div class="agile_top_brand_left_grid">
@@ -98,41 +98,7 @@
     				<button name="cmd" id="press${proCount}" class="addToCar btn btn-primary">
 							Add To Car
 					</button>
-<%-- 						<a  href="<spring:url value='/productList/productDetail?productID=${pros.productID}&type=${pbt.typeID}'/>" class="btn btn-primary" style="color:#fff;">詳細資訊</a> --%>
- 					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal${proCount}">詳細資訊</button>
-
- 					<!-- Modal商品明細 -->
-  					<div class="modal fade" id="myModal${proCount}" role="dialog">
-    					<div class="modal-dialog">
-    
-      					<!-- Modal content商品明細內容-->
-      					<div class="modal-content">
-        					<div class="modal-header">
-          					<button type="button" class="close" data-dismiss="modal">&times;</button>
-          					<h4 class="modal-title">愛料理商品</h4>
-        					</div>
-        					<div class="modal-body">
-         						<p>${pros.productID}</p>
-         						<input type="hidden" class="products${proCount}" id="productId${proCount}" name="productId" value="${pros.productID}" />
-								<p><img width="200px" height="200px" src="${pageContext.request.contextPath}/${imgArray[vs2.index]}"></img></p>
-								<p>商品名稱:${pros.productName}</p>
-								<p>商品資訊:${pros.productInfo}</p>
-								<p>商品單價:${pbt.unitPrice}</p>
-								<p>商品折扣:${pbt.discount}</p>
-								<p>商品特價:<fmt:formatNumber pattern="#0" value="${pbt.unitPrice*pbt.discount}" type="currency" /></p>
-								<p>購買數量:<input style="margin:5px;" type="number" class="products${proCount}" id="qtyModal${proCount}" value="1" min="1" max="99" /></p>
-								<p>商品庫存${pbt.unitStock}</p>
-								<p><button name="cmd" id="pModal${proCount}" class="addToCar btn btn-primary">
-												Add To Car
-								</button></p>
-        					</div>
-        					<div class="modal-footer">
-          					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        					</div>
-      					</div>
-      
-    					</div>
-  					</div>
+						<a  href="<spring:url value='/productList/productDetail?productID=${pros.productID}&type=${pbt.typeID}'/>" class="btn btn-primary" style="color:#fff;">詳細資訊</a>
 <!-- 				</div> -->
 				</div>
 				</div>
@@ -168,15 +134,18 @@ $(document).ready(function() {
 		var pageSet = 4;//tip:每個分頁顯示的商品數量
 		console.log( typeof(pageSet));//tip:typeof(pageSet)查看型態
 		var proCount = ${proCount};//tip:商品數量
-		var page = 1;//tip:設定第一頁頁碼
-		console.log("page1:"+page);
-		var totalPage = Math.ceil(proCount/pageSet);
+		var page = 0;
+		console.log("pageTypeOf:"+typeof(page))
+		console.log("pageS:"+page);
 		//tip: 總頁數 , Math.ceil()=無條件進位
+		var totalPage = Math.ceil(proCount/pageSet); 
 		showPagePros(page);//tip:剛載入就顯示此頁商品數量
 		var pageList='<li class=\"listPaper\" id=\"listPaper\"><button class=\"btLi ui-button ui-widget ui-corner-all\" id=\"pageFirst\">頁首</button></li><li class=\"listPaper\" id=\"listPaper\"><button class=\"pagePre ui-button ui-widget ui-corner-all\" id=\"pagePre\">上一頁</button></li>';
-		var finalPage=0; //tip:儲存末頁的頁碼
-		for(var thePage=1;thePage<=totalPage;thePage++){
-			pageList+='<li class=\"listPaper\" id=\"listPaper\"><button class=\"btLi\" id=\"btLi'+thePage+'\">'+thePage+'</button></li>';
+		var finalPage=0; 
+		for(var thePage=0;thePage<totalPage;thePage++){
+// 			url= "${pageContext.request.contextPath}/shoppingCart/productList?page="+i;
+// 			pageList+='<li class=\"listPaper\" id=\"li'+i+'\"><a href="<spring:url value="'+url+'"/>">'+i+'</a></li>';
+			pageList+='<li class=\"listPaper\" id=\"listPaper\"><button class=\"btLi\" id=\"btLi'+thePage+'\">'+(thePage+1)+'</button></li>';
 			finalPage=thePage; //tip:儲存末頁的頁碼
 		}
 		pageList+='<li class=\"listPaper\" id=\"listPaper\"><button class=\"pageNext ui-button ui-widget ui-corner-all\" id=\"pageNext\">下一頁</button></li><li class=\"listPaper\" id=\"listPaper\"><button class=\"btLi ui-button ui-widget ui-corner-all \" id=\"pageLast\">頁尾</button></li>';
@@ -191,17 +160,17 @@ $(document).ready(function() {
 	}		
 // 		hidePreNext(page);//tip:載入時顯示or隱藏的按鈕
 		
-// 		頁碼按鈕
+// 		點擊頁碼按鈕
 		$(".btLi").click(function(){
 			var id = $(this).attr("id");
 			var thisBtn = $(this);
 			if(id=="pageFirst"){
-				page = 1;
+				page = 0;
 				thisBtn = $(btLi.get(1));
 			}
 			else if (id=="pageLast"){
 				page = finalPage;
-				thisBtn = $(btLi.get(finalPage));
+				thisBtn = $(btLi.get(finalPage+1));
 			}
 			else {page = Number(id.replace("btLi",""));}
 			showPagePros(page);
@@ -209,24 +178,29 @@ $(document).ready(function() {
 			lightBtn(thisBtn);
 		})
 		
-// 		上一頁按鈕
+// 		點上一頁按鈕
 		$("#pagePre").click(function(){
-			if(page>1){page--;}
+			if(page>0){page--;}
 			showPagePros(page);
 			removeLightBtn()
+			var lightPageIndex = page+1;
 			console.log("page:"+page);
-			lightBtn($(btLi.get(page)));
-			hidePreNext();
+			console.log("lightPageIndex:"+lightPageIndex);
+			lightBtn($(btLi.get(lightPageIndex)));
+// 			hidePreNext();
 		})	
 		
-// 		下一頁按鈕
+// 		點下一頁按鈕
 		$("#pageNext").click(function(){
-			if(page<totalPage){page++;}
+			
+			if(page<totalPage-1){page++;}
 			showPagePros(page);
 			removeLightBtn()
+			var lightPageIndex = page+1;
 			console.log("page:"+page);
-			lightBtn($(btLi.get(page)));
-			hidePreNext();
+			console.log("lightPageIndex:"+lightPageIndex);
+			lightBtn($(btLi.get(lightPageIndex)));
+// 			hidePreNext();
 		})		
 		
 // 		標記指定按鈕
@@ -242,38 +216,38 @@ $(document).ready(function() {
 				})
 		}		
 
-// 		隱藏前進後退按鈕,設定2秒(2000毫秒)
+// 		隱藏前進後退按鈕
 		function hidePreNext(){
 			console.log("Hide");
 			console.log("page:"+page);
 			console.log("page==0:"+(page==0));
 			console.log("totalPage:"+totalPage);
-			if(page==totalPage){
-				$("#pageNext").hide(2000);	
-				$("#pageLast").hide(2000);
-				$("#pagePre").show(2000);
-				$("#pageFirst").show(2000);			
-			}else if(page==1){
-				$("#pagePre").hide(2000);
-				$("#pageFirst").hide(2000);	
-				$("#pageNext").show(2000);	
-				$("#pageLast").show(2000);	
+			if(page==totalPage-1){
+				$("#pageNext").hide();	
+				$("#pageLast").hide();
+				$("#pagePre").show();
+				$("#pageFirst").show();			
+			}else if(page==0){
+				$("#pagePre").hide();
+				$("#pageFirst").hide();	
+				$("#pageNext").show();	
+				$("#pageLast").show();	
 			}else{
-				$("#pageNext").show(2000);
-				$("#pagePre").show(2000);	
-				$("#pageFirst").show(2000);	
-				$("#pageLast").show(2000);	
+				$("#pageNext").show();
+				$("#pagePre").show();	
+				$("#pageFirst").show();	
+				$("#pageLast").show();	
 			}
 	}	
 		
 // 		顯示某分頁商品
 		function showPagePros(page){
 			$.each($(".products"),function(contentindex){
-				if(contentindex>=(page-1)*pageSet && contentindex < page*pageSet){
+				if(contentindex>=page*pageSet && contentindex < (page+1)*pageSet){
 					$(this).show();	
 				}else{$(this).hide();}
 			});	
-			hidePreNext(page);
+// 			hidePreNext(page);
 		}
 // 		測試$.each,目前沒用到
 		function testEach(){
@@ -285,20 +259,13 @@ $(document).ready(function() {
 		
 		$(".addToCar").click(function(){
 			alert("加入購物車成功");
-			var id = $(this).attr("id");
-			var qty = 0;
+			var id = $(this).attr("id"); 
 // 			若id =press10,取數字部分10當index
-			if(id.indexOf("press")!=-1){
-				index = id.replace("press","");
-				qty = $("#qty"+index).val();
-			}else{
-				index = id.replace("pModal","");
-				qty = $("#qtyModal"+index).val();
-			}
+			index = id.replace("press","");
 			var product = { 
 					  productId   : $("#productId"+index).val(),
 					  productName : $("#productName"+index).val(),
-					  qty 		  : qty,
+					  qty 		  : $("#qty"+index).val(),
 					  typeId      : $("#typeId"+index).val(),
 				      image1      : $("#image1"+index).val(),
 				      unitPrice   : $("#unitPrice"+index).val(),
