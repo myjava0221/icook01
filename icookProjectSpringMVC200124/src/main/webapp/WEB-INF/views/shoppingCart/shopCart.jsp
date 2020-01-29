@@ -12,13 +12,16 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta charset="UTF-8">
 <title>市集</title>
 <!-- for-mobile-apps -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="keywords"
 	content="Truckage Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 <link href="${pageContext.request.contextPath}/css/bootstrap.css"
 	rel="stylesheet" type="text/css" media="all" />
@@ -39,9 +42,12 @@
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/fragment/TopNav.jsp" />
-		<table id="shopCarTable" border="1">
+
+<div class="container">
+<!-- 		<table id="shopCarTable" border="1"> -->
+		<table class="table table-hover">
 <!-- 			<tr style="background-color: #a8fefa"> -->
-			<tr>
+			<tr class="success">
 				<th class=trHead>產品編號
 				<th class="trHead">產品名稱
 				<th class="trHead">單價
@@ -53,7 +59,7 @@
 				<th class="trHead">刪除
 				<c:forEach  items="${ShoppingCart.content}" var="cart"
 						varStatus="vs">
-						<tr id="trIndex${vs.index}">
+						<tr class="success" id="trIndex${vs.index}">
 							<td>${cart.value.productId}
 							<td>${cart.value.describe}
 							<td id="unitPrice${vs.index}">NT<fmt:formatNumber
@@ -82,10 +88,11 @@
 									<input type="hidden" id="listIndex${vs.index}" name="listIndex${vs.index}" value="${vs.index}" />
 					</c:forEach>
 			<form action="${pageContext.request.contextPath}/ShoppingCar/OrderCheck" method="GET">		
-			<tr>
+			<tr class="success">
 				<td colspan="9"><input type="submit" id="submit" value="確定購買" />
 			</form>
 		</table>
+</div>
 </body>
 <script>
 	$(document).ready(function() {

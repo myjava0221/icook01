@@ -112,19 +112,19 @@
           					<h4 class="modal-title">愛料理商品</h4>
         					</div>
         					<div class="modal-body">
-         						<p>${pros.productID}</p>
-         						<input type="hidden" class="products${proCount}" id="productId${proCount}" name="productId" value="${pros.productID}" />
-								<p><img width="200px" height="200px" src="${pageContext.request.contextPath}/${imgArray[vs2.index]}"></img></p>
-								<p>商品名稱:${pros.productName}</p>
-								<p>商品資訊:${pros.productInfo}</p>
-								<p>商品單價:${pbt.unitPrice}</p>
-								<p>商品折扣:${pbt.discount}</p>
-								<p>商品特價:<fmt:formatNumber pattern="#0" value="${pbt.unitPrice*pbt.discount}" type="currency" /></p>
-								<p>購買數量:<input style="margin:5px;" type="number" class="products${proCount}" id="qtyModal${proCount}" value="1" min="1" max="99" /></p>
-								<p>商品庫存${pbt.unitStock}</p>
-								<p><button name="cmd" id="pModal${proCount}" class="addToCar btn btn-primary">
+								<ul class="list-group">
+  									<li class="list-group-item"><img width="200px" height="200px" src="${pageContext.request.contextPath}/${imgArray[vs2.index]}"></img></li>
+  									<li class="list-group-item">商品名稱:${pros.productName}</li>
+  									<li class="list-group-item">商品資訊:${pros.productInfo}</li>
+  									<li class="list-group-item">商品單價:${pbt.unitPrice}</li>
+  									<li class="list-group-item">商品折扣:${pbt.discount}</li>
+  									<li class="list-group-item">商品特價:<fmt:formatNumber pattern="#0" value="${pbt.unitPrice*pbt.discount}" type="currency" /></li>
+  									<li class="list-group-item">購買數量:<input style="margin:5px;" type="number" class="products${proCount}" id="qtyModal${proCount}" value="1" min="1" max="99" /></li>
+  									<li class="list-group-item">商品庫存${pbt.unitStock}</li>
+  									<li class="list-group-item"><button name="cmd" id="pModal${proCount}" class="addToCar btn btn-primary">
 												Add To Car
-								</button></p>
+									</button></li>
+								</ul>			
         					</div>
         					<div class="modal-footer">
           					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
