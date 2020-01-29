@@ -21,6 +21,10 @@
 <meta name="keywords"
 	content="Truckage Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
 <link href="${pageContext.request.contextPath}/css/style.css"
 	rel="stylesheet" type="text/css" media="all" />
 <link href="${pageContext.request.contextPath}/css/bootstrap.css"
@@ -60,7 +64,7 @@
 	</div>
 
 
-	<div class="prosDiv">
+<div class="container-fluid prosDiv">
 <!-- 	<p>1第一層迴圈forEach取productBean</p> -->
 <!-- 	<p>2 迴圈中用core的Set設定ProductBean的type資料(Set陣列)</p> -->
 <!-- 	<p>3用將此Set用toArray(new ProductTypeBean)轉成陣列後，放入List,放入sessionScope</p> -->
@@ -70,19 +74,19 @@
 			<c:set var="pros" value="${pros}" scope="session"></c:set>
 			<c:set var="imgArray" value="${ImgList[vs.index]}"></c:set>
 			
-			<c:forEach items="${prodsSet}" var="pbt" varStatus="vs">
+			<c:forEach items="${prodsSet}" var="pbt" varStatus="vs2">
 <!-- 			紀錄商品數量,並作為索引代號 -->
 			<c:set var="proCount" value="${proCount+1}" />
-			<div class="col-md-3 top_brand_left" id="divTop${proCount}">
+			<div class="products col-md-3 top_brand_left" id="divTop${proCount}">
 			<div class="agile_top_brand_left_grid">
-			<div class="agile_top_brand_left_grid1">
-				<c:set var="image1" value="${pageContext.request.contextPath}/${imgArray[vs.index]}" scope="session"></c:set>				
-				<p><img width="200px" height="200" src="${pageContext.request.contextPath}/${imgArray[vs.index]}"></img></p>
+<!-- 			<div class="agile_top_brand_left_grid1"> -->
+				<c:set var="image1" value="${pageContext.request.contextPath}/${imgArray[vs2.index]}" scope="session"></c:set>				
+				<p><img width="200px" height="200" src="${pageContext.request.contextPath}/${imgArray[vs2.index]}"></img></p>
 				<c:set var="pbt" value="${pbt}" scope="session" />
 				<p>${pros.productName}</p>
 				<p>${pros.category}</p>
 				<p>${pbt.unitPrice}</p>
-				<p><input type="number" class="products${proCount}" id="qty${proCount}" value="1" min="1" max="99" /></p>
+				<p><input style="margin:5px;" type="number" class="products${proCount}" id="qty${proCount}" value="1" min="1" max="99" /></p>
 				<input type="hidden" class="products${proCount}" id="productId${proCount}" name="productId" value="${pros.productID}" />
 				<input type="hidden" class="products${proCount}" id="productName${proCount}" name="productName" value="${pros.productName}" />
 				<input type="hidden" class="products${proCount}" id="typeId${proCount}"  name="typeId" value="${pbt.typeID}" />
@@ -90,32 +94,27 @@
 				<input type="hidden" class="products${proCount}" id="unitPrice${proCount}"  name="unitPrice" value="${pbt.unitPrice}" />
 				<input type="hidden" class="products${proCount}" id="describe${proCount}"  name="describe" value="${pros.productName}(${pbt.typeTitle})" />
 				<input type="hidden" class="products${proCount}" id="discount${proCount}"  name="discount" value="${pbt.discount}" />
-				<button name="cmd" id="press${proCount}" class="rt-button rt-button-xlarge list-cart-submit rt-button-submit">
-					Add To Car
-				</button>
-    			<div class="wthree_more wthree_more2" style="width:300px;">
-					<a href="<spring:url value='/productDetail?productID=${pros.productID}&type=${pbt.typeID}'/>" 
-						class="button--wayra button--border-thick button--text-upper button--size-s">
-						詳細資訊
-					</a>	
-				</div>
-				
-				</div>
+    			
+    				<button name="cmd" id="press${proCount}" class="addToCar btn btn-primary">
+							Add To Car
+					</button>
+						<a  href="<spring:url value='/productList/productDetail?productID=${pros.productID}&type=${pbt.typeID}'/>" class="btn btn-primary" style="color:#fff;">詳細資訊</a>
+<!-- 				</div> -->
 				</div>
 				</div>
 			</c:forEach>
 		</c:forEach>
-	</div>
 	
-	<div class="container">
-  		<h2>有<c:out value="${proCount}"/>件商品</h2>                
-  		<h2>共XX頁</h2>                
+</div>
+	<!-- for bootstrap working -->
+<div class="container">
+  		<h2 style="margin:20px; text-align:center;">有<c:out value="${proCount}"/>件商品</h2>                
+  		<h2 style="text-align:center;">共XX頁</h2>
   		<ul class="pager">
 <!--    	 	<li><a href="#">Previous</a></li> -->
 <!--     		<li><a href="#">Next</a></li> -->
   		</ul>
-	</div>
-	<!-- for bootstrap working -->
+</div>
 <script type="text/javascript">
 $(document).ready(function() {
 		var curWwwPath=window.document.location.href;
@@ -132,44 +131,133 @@ $(document).ready(function() {
 		
 // 		======================p分頁p==========================
 		
-		var pageSet = 4;//每個分頁顯示的商品數量
-		var pageNumber = Math.ceil("${proCount}"/pageSet);
-		showPagePros(0);//剛載入就顯示此頁商品數量
-
-		var pageList='<li class=\"pagefirst\" id=\"li0\"><button class=\"btLi ui-button ui-widget ui-corner-all \" id=\"btLi0\">第一頁</button></li>';
-		var j=0;
-		for(var i=0;i<pageNumber;i++){
-			console.log("i="+i);
+		var pageSet = 4;//tip:每個分頁顯示的商品數量
+		console.log( typeof(pageSet));//tip:typeof(pageSet)查看型態
+		var proCount = ${proCount};//tip:商品數量
+		var page = 0;
+		console.log("pageTypeOf:"+typeof(page))
+		console.log("pageS:"+page);
+		//tip: 總頁數 , Math.ceil()=無條件進位
+		var totalPage = Math.ceil(proCount/pageSet); 
+		showPagePros(page);//tip:剛載入就顯示此頁商品數量
+		var pageList='<li class=\"listPaper\" id=\"listPaper\"><button class=\"btLi ui-button ui-widget ui-corner-all\" id=\"pageFirst\">頁首</button></li><li class=\"listPaper\" id=\"listPaper\"><button class=\"pagePre ui-button ui-widget ui-corner-all\" id=\"pagePre\">上一頁</button></li>';
+		var finalPage=0; 
+		for(var thePage=0;thePage<totalPage;thePage++){
 // 			url= "${pageContext.request.contextPath}/shoppingCart/productList?page="+i;
 // 			pageList+='<li class=\"listPaper\" id=\"li'+i+'\"><a href="<spring:url value="'+url+'"/>">'+i+'</a></li>';
-			pageList+='<li class=\"listPaper\" id=\"li'+i+'\"><button class=\"btLi ui-button ui-widget ui-corner-all \" id=\"btLi'+i+'\">'+(i+1)+'</button></li>';
-			j=i;
+			pageList+='<li class=\"listPaper\" id=\"listPaper\"><button class=\"btLi\" id=\"btLi'+thePage+'\">'+(thePage+1)+'</button></li>';
+			finalPage=thePage; //tip:儲存末頁的頁碼
 		}
-		console.log("j:"+j);
-		pageList+='<li class=\"pageFinal\" id=\"li'+j+'\"><button class=\"btLi ui-button ui-widget ui-corner-all \" id=\"btLi'+j+'\">末頁</button></li>';
+		pageList+='<li class=\"listPaper\" id=\"listPaper\"><button class=\"pageNext ui-button ui-widget ui-corner-all\" id=\"pageNext\">下一頁</button></li><li class=\"listPaper\" id=\"listPaper\"><button class=\"btLi ui-button ui-widget ui-corner-all \" id=\"pageLast\">頁尾</button></li>';
 		$(".pager").html(pageList);
 		
+		var btLi = $(".btLi"); //tip:將同名class以List儲存,故提取時可以用.get(0)、get(1)、get(n)
+		console.log(btLi);// tip:此List[btn頁首、btn0、btn1、btn2、btn3、btn頁尾]
+		
+// 		高亮顯示第一頁的按鈕	
+		if(totalPage>0){
+			lightBtn($(btLi.get(1)));
+	}		
+// 		hidePreNext(page);//tip:載入時顯示or隱藏的按鈕
+		
+// 		點擊頁碼按鈕
 		$(".btLi").click(function(){
-			var id = $(this).attr("id"); 
-			var page = Number(id.replace("btLi",""));
-			doAjax(showPagePros(page));
+			var id = $(this).attr("id");
+			var thisBtn = $(this);
+			if(id=="pageFirst"){
+				page = 0;
+				thisBtn = $(btLi.get(1));
+			}
+			else if (id=="pageLast"){
+				page = finalPage;
+				thisBtn = $(btLi.get(finalPage+1));
+			}
+			else {page = Number(id.replace("btLi",""));}
+			showPagePros(page);
+			removeLightBtn()
+			lightBtn(thisBtn);
 		})
 		
-		$.each($(".col-md-3"), function( index, value ) {
-  			console.log( index + ": " + value );
-		});
+// 		點上一頁按鈕
+		$("#pagePre").click(function(){
+			if(page>0){page--;}
+			showPagePros(page);
+			removeLightBtn()
+			var lightPageIndex = page+1;
+			console.log("page:"+page);
+			console.log("lightPageIndex:"+lightPageIndex);
+			lightBtn($(btLi.get(lightPageIndex)));
+// 			hidePreNext();
+		})	
+		
+// 		點下一頁按鈕
+		$("#pageNext").click(function(){
+			
+			if(page<totalPage-1){page++;}
+			showPagePros(page);
+			removeLightBtn()
+			var lightPageIndex = page+1;
+			console.log("page:"+page);
+			console.log("lightPageIndex:"+lightPageIndex);
+			lightBtn($(btLi.get(lightPageIndex)));
+// 			hidePreNext();
+		})		
+		
+// 		標記指定按鈕
+		function lightBtn(targetBtn){
+			targetBtn.addClass("pointBtnPage");
+		}
+		
+// 		移除所有標記按鈕
+		function removeLightBtn(){
+			$(".pointBtnPage").each(
+				function(){
+					$(this).removeClass("pointBtnPage");	
+				})
+		}		
+
+// 		隱藏前進後退按鈕
+		function hidePreNext(){
+			console.log("Hide");
+			console.log("page:"+page);
+			console.log("page==0:"+(page==0));
+			console.log("totalPage:"+totalPage);
+			if(page==totalPage-1){
+				$("#pageNext").hide();	
+				$("#pageLast").hide();
+				$("#pagePre").show();
+				$("#pageFirst").show();			
+			}else if(page==0){
+				$("#pagePre").hide();
+				$("#pageFirst").hide();	
+				$("#pageNext").show();	
+				$("#pageLast").show();	
+			}else{
+				$("#pageNext").show();
+				$("#pagePre").show();	
+				$("#pageFirst").show();	
+				$("#pageLast").show();	
+			}
+	}	
 		
 // 		顯示某分頁商品
 		function showPagePros(page){
-			$.each($(".col-md-3"),function(contentindex){
+			$.each($(".products"),function(contentindex){
 				if(contentindex>=page*pageSet && contentindex < (page+1)*pageSet){
 					$(this).show();	
 				}else{$(this).hide();}
 			});	
+// 			hidePreNext(page);
 		}
-// 		=================================================		
+// 		測試$.each,目前沒用到
+		function testEach(){
+			$.each($(".products"), function( index, value ) {
+  				console.log( index + ": " + value );
+			});
+		}		
+// 		========================a加入購物車a=========================		
 		
-		$(".rt-button").click(function(){
+		$(".addToCar").click(function(){
 			alert("加入購物車成功");
 			var id = $(this).attr("id"); 
 // 			若id =press10,取數字部分10當index
@@ -198,14 +286,13 @@ $(document).ready(function() {
 			console.log("${ShoppingCart.itemNumber}");
 			$("#cartNo").load("");
 		})
-		
-// 		每x毫秒刷新頁面
+// 		=======================s每x毫秒刷新頁面s==========================			
 		function refresh(){ 
 			    //update src attribute with a cache buster query 
 			    setTimeout("refresh();",10) 
 			} 
 		
-// 		使用ajax不刷新頁面執行某功能
+// 		使用ajax不刷新頁面執行控制器or前端(未實驗)
 		function doAjax(targetUrl,inputData,outputData){
 			$.ajax({
 				url:targetUrl,//後端controller的URL

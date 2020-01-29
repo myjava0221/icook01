@@ -159,7 +159,7 @@ public class ProductListController {
 	}
 
 	
-	@RequestMapping(value = "shoppingCart/productDetail")
+	@RequestMapping(value = "/productList/productDetail")
 	public ModelAndView productDetail(
 			HttpServletRequest request,
 			HttpServletResponse response) {
