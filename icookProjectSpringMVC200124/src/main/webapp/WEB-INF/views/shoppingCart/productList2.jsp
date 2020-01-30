@@ -71,11 +71,11 @@
 <!-- 	<p>4第二層迴圈 forEach取producTypetBean的資料</p> -->
 		<c:forEach items="${prosList}" var="pros" varStatus="vs">
 			<c:set var="prodsSet" value="${pros.type}"></c:set>
-			<c:set var="pros" value="${pros}" scope="session"></c:set>
+<%-- 			<c:set var="pros" value="${pros}"></c:set> --%>
 			<c:set var="imgArray" value="${ImgList[vs.index]}"></c:set>
 			
 			<c:forEach items="${prodsSet}" var="pbt" varStatus="vs2">
-<!-- 			紀錄商品數量,並作為索引代號 -->
+<!-- 			proCount是紀錄商品數量,並作為索引代號 -->
 			<c:set var="proCount" value="${proCount+1}" />
 			<div class="products col-md-3 top_brand_left" id="divTop${proCount}">
 			<div class="agile_top_brand_left_grid">
@@ -86,7 +86,8 @@
 				<p>${pros.productName}</p>
 				<p>${pros.category}</p>
 				<p>${pbt.unitPrice}</p>
-				<p><input style="margin:5px;" type="number" class="products${proCount}" id="qty${proCount}" value="1" min="1" max="99" /></p>
+				<p><input style="margin:5px;" type="number" class="products${proCount} quantity${proCount}" id="qty${proCount}" value="1" min="1" max="99" /></p>
+				
 				<input type="hidden" class="products${proCount}" id="productId${proCount}" name="productId" value="${pros.productID}" />
 				<input type="hidden" class="products${proCount}" id="productName${proCount}" name="productName" value="${pros.productName}" />
 				<input type="hidden" class="products${proCount}" id="typeId${proCount}"  name="typeId" value="${pbt.typeID}" />
@@ -98,7 +99,52 @@
     				<button name="cmd" id="press${proCount}" class="addToCar btn btn-primary">
 							Add To Car
 					</button>
-						<a  href="<spring:url value='/productList/productDetail?productID=${pros.productID}&type=${pbt.typeID}'/>" class="btn btn-primary" style="color:#fff;">詳細資訊</a>
+<%-- 						<a  href="<spring:url value='/productList/productDetail?productID=${pros.productID}&type=${pbt.typeID}'/>" class="btn btn-primary" style="color:#fff;">詳細資訊</a> --%>
+ 					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal${proCount}">詳細資訊</button>
+
+ 					<!-- Modal商品明細 -->
+  					<div class="modal fade" id="myModal${proCount}" role="dialog">
+    					<div class="modal-dialog">
+    
+      					<!-- Modal content商品明細內容-->
+      					<div class="modal-content">
+        					<div class="modal-header">
+          					<button type="button" class="close" data-dismiss="modal">&times;</button>
+          					<h4 class="modal-title">愛料理商品</h4>
+        					</div>
+        					<div class="modal-body">
+								<ul class="list-group">
+  									<li class="list-group-item"><img width="200px" height="200px" src="${pageContext.request.contextPath}/${imgArray[vs2.index]}"></img></li>
+  									<li class="list-group-item">商品名稱:${pros.productName}</li>
+  									<li class="list-group-item">商品資訊:${pros.productInfo}</li>
+  									<li class="list-group-item">商品單價:${pbt.unitPrice}</li>
+  									<li class="list-group-item">商品折扣:${pbt.discount}</li>
+  									<li class="list-group-item">商品特價:<fmt:formatNumber pattern="#0" value="${pbt.unitPrice*pbt.discount}" type="currency" /></li>
+  									<li class="list-group-item">購買數量:<input style="margin:5px;" type="number" class="products${proCount} quantity${proCount}" id="qtyModal${proCount}" value="1" min="1" max="99" /></li>
+  									<li class="list-group-item">
+  									  <div class="dropdown">
+    									<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
+    									<span class="caret"></span></button>
+    									<ul class="dropdown-menu">
+      										<li>HTML</li>
+      										<li>CSS</li>
+      										<li>JavaScript</li>
+    									</ul>
+ 									   </div>
+ 									</li>
+  									<li class="list-group-item">商品庫存${pbt.unitStock}</li>
+  									<li class="list-group-item"><button name="cmd" id="pModal${proCount}" class="addToCar btn btn-primary">
+												Add To Car
+									</button></li>
+								</ul>			
+        					</div>
+        					<div class="modal-footer">
+          					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        					</div>
+      					</div>
+      
+    					</div>
+  					</div>
 <!-- 				</div> -->
 				</div>
 				</div>
@@ -109,7 +155,7 @@
 	<!-- for bootstrap working -->
 <div class="container">
   		<h2 style="margin:20px; text-align:center;">有<c:out value="${proCount}"/>件商品</h2>                
-  		<h2 style="text-align:center;">共XX頁</h2>
+  		<h2 style="text-align:center;">共<c:out value="4"/>頁</h2>
   		<ul class="pager">
 <!--    	 	<li><a href="#">Previous</a></li> -->
 <!--     		<li><a href="#">Next</a></li> -->
@@ -134,18 +180,15 @@ $(document).ready(function() {
 		var pageSet = 4;//tip:每個分頁顯示的商品數量
 		console.log( typeof(pageSet));//tip:typeof(pageSet)查看型態
 		var proCount = ${proCount};//tip:商品數量
-		var page = 0;
-		console.log("pageTypeOf:"+typeof(page))
-		console.log("pageS:"+page);
+		var page = 1;//tip:設定第一頁頁碼
+		console.log("page1:"+page);
+		var totalPage = Math.ceil(proCount/pageSet);
 		//tip: 總頁數 , Math.ceil()=無條件進位
-		var totalPage = Math.ceil(proCount/pageSet); 
 		showPagePros(page);//tip:剛載入就顯示此頁商品數量
 		var pageList='<li class=\"listPaper\" id=\"listPaper\"><button class=\"btLi ui-button ui-widget ui-corner-all\" id=\"pageFirst\">頁首</button></li><li class=\"listPaper\" id=\"listPaper\"><button class=\"pagePre ui-button ui-widget ui-corner-all\" id=\"pagePre\">上一頁</button></li>';
-		var finalPage=0; 
-		for(var thePage=0;thePage<totalPage;thePage++){
-// 			url= "${pageContext.request.contextPath}/shoppingCart/productList?page="+i;
-// 			pageList+='<li class=\"listPaper\" id=\"li'+i+'\"><a href="<spring:url value="'+url+'"/>">'+i+'</a></li>';
-			pageList+='<li class=\"listPaper\" id=\"listPaper\"><button class=\"btLi\" id=\"btLi'+thePage+'\">'+(thePage+1)+'</button></li>';
+		var finalPage=0; //tip:儲存末頁的頁碼
+		for(var thePage=1;thePage<=totalPage;thePage++){
+			pageList+='<li class=\"listPaper\" id=\"listPaper\"><button class=\"btLi\" id=\"btLi'+thePage+'\">'+thePage+'</button></li>';
 			finalPage=thePage; //tip:儲存末頁的頁碼
 		}
 		pageList+='<li class=\"listPaper\" id=\"listPaper\"><button class=\"pageNext ui-button ui-widget ui-corner-all\" id=\"pageNext\">下一頁</button></li><li class=\"listPaper\" id=\"listPaper\"><button class=\"btLi ui-button ui-widget ui-corner-all \" id=\"pageLast\">頁尾</button></li>';
@@ -160,17 +203,17 @@ $(document).ready(function() {
 	}		
 // 		hidePreNext(page);//tip:載入時顯示or隱藏的按鈕
 		
-// 		點擊頁碼按鈕
+// 		頁碼按鈕
 		$(".btLi").click(function(){
 			var id = $(this).attr("id");
 			var thisBtn = $(this);
 			if(id=="pageFirst"){
-				page = 0;
+				page = 1;
 				thisBtn = $(btLi.get(1));
 			}
 			else if (id=="pageLast"){
 				page = finalPage;
-				thisBtn = $(btLi.get(finalPage+1));
+				thisBtn = $(btLi.get(finalPage));
 			}
 			else {page = Number(id.replace("btLi",""));}
 			showPagePros(page);
@@ -178,29 +221,24 @@ $(document).ready(function() {
 			lightBtn(thisBtn);
 		})
 		
-// 		點上一頁按鈕
+// 		上一頁按鈕
 		$("#pagePre").click(function(){
-			if(page>0){page--;}
+			if(page>1){page--;}
 			showPagePros(page);
 			removeLightBtn()
-			var lightPageIndex = page+1;
 			console.log("page:"+page);
-			console.log("lightPageIndex:"+lightPageIndex);
-			lightBtn($(btLi.get(lightPageIndex)));
-// 			hidePreNext();
+			lightBtn($(btLi.get(page)));
+			hidePreNext();
 		})	
 		
-// 		點下一頁按鈕
+// 		下一頁按鈕
 		$("#pageNext").click(function(){
-			
-			if(page<totalPage-1){page++;}
+			if(page<totalPage){page++;}
 			showPagePros(page);
 			removeLightBtn()
-			var lightPageIndex = page+1;
 			console.log("page:"+page);
-			console.log("lightPageIndex:"+lightPageIndex);
-			lightBtn($(btLi.get(lightPageIndex)));
-// 			hidePreNext();
+			lightBtn($(btLi.get(page)));
+			hidePreNext();
 		})		
 		
 // 		標記指定按鈕
@@ -216,56 +254,56 @@ $(document).ready(function() {
 				})
 		}		
 
-// 		隱藏前進後退按鈕
+// 		隱藏前進後退按鈕,設定2秒(2000毫秒)
 		function hidePreNext(){
 			console.log("Hide");
 			console.log("page:"+page);
 			console.log("page==0:"+(page==0));
 			console.log("totalPage:"+totalPage);
-			if(page==totalPage-1){
-				$("#pageNext").hide();	
-				$("#pageLast").hide();
-				$("#pagePre").show();
-				$("#pageFirst").show();			
-			}else if(page==0){
-				$("#pagePre").hide();
-				$("#pageFirst").hide();	
-				$("#pageNext").show();	
-				$("#pageLast").show();	
+			if(page==totalPage){
+				$("#pageNext").hide(2000);	
+				$("#pageLast").hide(2000);
+				$("#pagePre").show(2000);
+				$("#pageFirst").show(2000);			
+			}else if(page==1){
+				$("#pagePre").hide(2000);
+				$("#pageFirst").hide(2000);	
+				$("#pageNext").show(2000);	
+				$("#pageLast").show(2000);	
 			}else{
-				$("#pageNext").show();
-				$("#pagePre").show();	
-				$("#pageFirst").show();	
-				$("#pageLast").show();	
+				$("#pageNext").show(2000);
+				$("#pagePre").show(2000);	
+				$("#pageFirst").show(2000);	
+				$("#pageLast").show(2000);	
 			}
 	}	
 		
 // 		顯示某分頁商品
 		function showPagePros(page){
 			$.each($(".products"),function(contentindex){
-				if(contentindex>=page*pageSet && contentindex < (page+1)*pageSet){
+				if(contentindex>=(page-1)*pageSet && contentindex < page*pageSet){
 					$(this).show();	
 				}else{$(this).hide();}
 			});	
-// 			hidePreNext(page);
+			hidePreNext(page);
 		}
-// 		測試$.each,目前沒用到
-		function testEach(){
-			$.each($(".products"), function( index, value ) {
-  				console.log( index + ": " + value );
-			});
-		}		
 // 		========================a加入購物車a=========================		
-		
 		$(".addToCar").click(function(){
 			alert("加入購物車成功");
-			var id = $(this).attr("id"); 
+			var id = $(this).attr("id");
+			var qty = 0;
 // 			若id =press10,取數字部分10當index
-			index = id.replace("press","");
+			if(id.indexOf("press")!=-1){
+				index = id.replace("press","");
+				qty = $("#qty"+index).val();
+			}else{
+				index = id.replace("pModal","");
+				qty = $("#qtyModal"+index).val();
+			}
 			var product = { 
 					  productId   : $("#productId"+index).val(),
 					  productName : $("#productName"+index).val(),
-					  qty 		  : $("#qty"+index).val(),
+					  qty 		  : qty,
 					  typeId      : $("#typeId"+index).val(),
 				      image1      : $("#image1"+index).val(),
 				      unitPrice   : $("#unitPrice"+index).val(),
@@ -315,6 +353,38 @@ $(document).ready(function() {
 			});
 		}
 		
+// 		=======================s測試區s==========================
+// 		01測試$.each,目前沒用到
+		function testEach(){
+			$.each($(".products"), function( index, value ) {
+  				console.log( index + ": " + value );
+			});
+		}
+
+// 		02測試class的List,目前沒用到	
+		function test1(){
+				var	quantity = $(".quantity2");
+				console.log("quantity2:"+quantity);
+				console.log("quantity2(0):"+ typeof(quantity.get(0)));
+				console.log("quantity2(0).get(0).value:"+ quantity.get(0).value);
+				console.log("quantity2(0):"+ $(quantity.get(0)).val());
+				console.log("quantity2(0).html():"+ $(quantity.get(0)).html());
+				console.log("quantity2(0).text():"+ $(quantity.get(0)).text());
+				console.log("$(quantity.get(0)).attr(\"id\")):"+ $(quantity.get(0)).attr("id"));
+				console.log("quantity2(1):"+ quantity.get(1));
+				console.log("quantity2(1):"+ quantity.get(1).value);
+				console.log("quantity2(1):"+ $(quantity.get(1)).html());
+				console.log("quantity2(1):"+ $(quantity.get(1)).text());
+				console.log("quantity2(1):"+ $(quantity.get(1)).attr("id"));
+				console.log("quantity2(1):"+ $(quantity.get(1)).type);
+				$.each(quantity,function(index,value){
+					console.log(index,":value:"+value);
+					console.log($(value).attr("id"));
+				})
+			}
+			
+//			03呼叫測試用method(class的List)			
+// 			test1();
 })
 </script>
 </body>

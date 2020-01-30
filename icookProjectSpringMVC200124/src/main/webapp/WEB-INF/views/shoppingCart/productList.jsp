@@ -86,7 +86,8 @@
 				<p>${pros.productName}</p>
 				<p>${pros.category}</p>
 				<p>${pbt.unitPrice}</p>
-				<p><input style="margin:5px;" type="number" class="products${proCount}" id="qty${proCount}" value="1" min="1" max="99" /></p>
+				<p><input style="margin:5px;" type="number" class="products${proCount} quantity${proCount}" id="qty${proCount}" value="1" min="1" max="99" /></p>
+				
 				<input type="hidden" class="products${proCount}" id="productId${proCount}" name="productId" value="${pros.productID}" />
 				<input type="hidden" class="products${proCount}" id="productName${proCount}" name="productName" value="${pros.productName}" />
 				<input type="hidden" class="products${proCount}" id="typeId${proCount}"  name="typeId" value="${pbt.typeID}" />
@@ -99,16 +100,16 @@
 							Add To Car
 					</button>
 <%-- 						<a  href="<spring:url value='/productList/productDetail?productID=${pros.productID}&type=${pbt.typeID}'/>" class="btn btn-primary" style="color:#fff;">詳細資訊</a> --%>
- 					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal${proCount}">詳細資訊</button>
+ 					<button type="button" class="btn btn-primary useModal" data-toggle="modal" data-target="#myModal${proCount}">詳細資訊</button>
 
- 					<!-- Modal商品明細 -->
-  					<div class="modal fade" id="myModal${proCount}" role="dialog">
+ 					<!-- Modal商品明細 aria-hidden="true" data-backdrop="static"設定後,只能用[X]or Close來關閉Modal --> 
+  					<div class="modal fade thisModal" id="myModal${proCount}" role="dialog" aria-hidden="true" data-backdrop="static">
     					<div class="modal-dialog">
     
       					<!-- Modal content商品明細內容-->
       					<div class="modal-content">
         					<div class="modal-header">
-          					<button type="button" class="close" data-dismiss="modal">&times;</button>
+          					<button type="button" class="close useClose" data-dismiss="modal">&times;</button>
           					<h4 class="modal-title">愛料理商品</h4>
         					</div>
         					<div class="modal-body">
@@ -119,15 +120,26 @@
   									<li class="list-group-item">商品單價:${pbt.unitPrice}</li>
   									<li class="list-group-item">商品折扣:${pbt.discount}</li>
   									<li class="list-group-item">商品特價:<fmt:formatNumber pattern="#0" value="${pbt.unitPrice*pbt.discount}" type="currency" /></li>
-  									<li class="list-group-item">購買數量:<input style="margin:5px;" type="number" class="products${proCount}" id="qtyModal${proCount}" value="1" min="1" max="99" /></li>
+  									<li class="list-group-item">購買數量:<input style="margin:5px;" type="number" class="products${proCount} quantity${proCount}" id="qty${proCount}" value="1" min="1" max="99" /></li>
+  									<li class="list-group-item">
+  									  <div class="dropdown">
+    									<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
+    									<span class="caret"></span></button>
+    									<ul class="dropdown-menu">
+      										<li>HTML</li>
+      										<li>CSS</li>
+      										<li>JavaScript</li>
+    									</ul>
+ 									   </div>
+ 									</li>
   									<li class="list-group-item">商品庫存${pbt.unitStock}</li>
-  									<li class="list-group-item"><button name="cmd" id="pModal${proCount}" class="addToCar btn btn-primary">
+  									<li class="list-group-item"><button name="cmd" id="press${proCount}" class="addToCar btn btn-primary">
 												Add To Car
 									</button></li>
 								</ul>			
         					</div>
         					<div class="modal-footer">
-          					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          					<button type="button" class="btn btn-default useClose" data-dismiss="modal">Close</button>
         					</div>
       					</div>
       
@@ -143,7 +155,7 @@
 	<!-- for bootstrap working -->
 <div class="container">
   		<h2 style="margin:20px; text-align:center;">有<c:out value="${proCount}"/>件商品</h2>                
-  		<h2 style="text-align:center;">共XX頁</h2>
+  		<h2 style="text-align:center;">共<c:out value="4"/>頁</h2>
   		<ul class="pager">
 <!--    	 	<li><a href="#">Previous</a></li> -->
 <!--     		<li><a href="#">Next</a></li> -->
@@ -275,26 +287,48 @@ $(document).ready(function() {
 			});	
 			hidePreNext(page);
 		}
-// 		測試$.each,目前沒用到
-		function testEach(){
-			$.each($(".products"), function( index, value ) {
-  				console.log( index + ": " + value );
-			});
-		}		
-// 		========================a加入購物車a=========================		
+// ========================a加入購物車a=========================		
+	//m判斷是否使用modal
+		var useModalDe = false;
+		$(".useModal").click(function(){
+			console.log("useModal");
+			useModalDe = true;
+		})
+    //m判斷是否開啟modal視窗(未完成)
+   $('#myModal1').on('shown.bs.modal', function (e) {
+      console.log("mmmmmmmmmmmmmmmm");
+      alert("hhhhh");
+   })
+	
+    //m判斷是否關閉 modal視窗(未完成)
+		
+	//c判斷是否點[x] or close關閉modal
+		$(".useClose").click(function(){
+			console.log("useClose");
+			useModalDe = false;
+		})
+		
+// 		$(".thisModal").modal({
+// 			//s點擊空白處不關閉
+// 			backdrop:"static",
+// 			keyboard: false
+// 		})
 		
 		$(".addToCar").click(function(){
 			alert("加入購物車成功");
 			var id = $(this).attr("id");
-			var qty = 0;
 // 			若id =press10,取數字部分10當index
-			if(id.indexOf("press")!=-1){
-				index = id.replace("press","");
-				qty = $("#qty"+index).val();
+			var	index = id.replace("press","");
+			var	quantity = $(".quantity"+index);
+			var qty = 0;
+			if(useModalDe){
+				qty = $(quantity.get(1)).val()
 			}else{
-				index = id.replace("pModal","");
-				qty = $("#qtyModal"+index).val();
+				qty = $("#qty"+index).val();
 			}
+			console.log("useModalDe:"+useModalDe);
+			console.log("qty:"+qty);
+			useModalDe = false;
 			var product = { 
 					  productId   : $("#productId"+index).val(),
 					  productName : $("#productName"+index).val(),
@@ -348,6 +382,38 @@ $(document).ready(function() {
 			});
 		}
 		
+// 		=======================s測試區s==========================
+// 		01測試$.each,目前沒用到
+		function testEach(){
+			$.each($(".products"), function( index, value ) {
+  				console.log( index + ": " + value );
+			});
+		}
+
+// 		02測試class的List,目前沒用到	
+		function test1(){
+				var	quantity = $(".quantity2");
+				console.log("quantity2:"+quantity);
+				console.log("quantity2(0):"+ typeof(quantity.get(0)));
+				console.log("quantity2(0).get(0).value:"+ quantity.get(0).value);
+				console.log("quantity2(0):"+ $(quantity.get(0)).val());
+				console.log("quantity2(0).html():"+ $(quantity.get(0)).html());
+				console.log("quantity2(0).text():"+ $(quantity.get(0)).text());
+				console.log("$(quantity.get(0)).attr(\"id\")):"+ $(quantity.get(0)).attr("id"));
+				console.log("quantity2(1):"+ quantity.get(1));
+				console.log("quantity2(1):"+ quantity.get(1).value);
+				console.log("quantity2(1):"+ $(quantity.get(1)).html());
+				console.log("quantity2(1):"+ $(quantity.get(1)).text());
+				console.log("quantity2(1):"+ $(quantity.get(1)).attr("id"));
+				console.log("quantity2(1):"+ $(quantity.get(1)).val());
+				$.each(quantity,function(index,value){
+					console.log(index,":value:"+value);
+					console.log($(value).attr("id"));
+				})
+			}
+			
+//			03呼叫測試用method(class的List)			
+// 			test1();
 })
 </script>
 </body>
