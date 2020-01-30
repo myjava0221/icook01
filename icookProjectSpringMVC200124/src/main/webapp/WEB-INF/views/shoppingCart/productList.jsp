@@ -117,12 +117,7 @@
   									<li class="list-group-item">商品特價:<fmt:formatNumber pattern="#0" value="${pbt.unitPrice*pbt.discount}" type="currency" /></li>
 <%--   									<li class="list-group-item">購買數量:<input style="margin:5px;" type="number" class="products${proCount} quantity${proCount}" id="qty${proCount}" value="1" min="1" max="99" /></li> --%>
   									<li class="list-group-item">購買數量:
-  									<select class="selectpicker products${proCount} quantity${proCount}" id="qty${proCount}">
-<!--   										<option>1</option> -->
-<!--   										<option>2</option> -->
-<!--   										<option>3</option> -->
-<!--   										<option>4</option> -->
-<!--   										<option>5</option> -->
+  									<select class="selectpicker selectQty products${proCount} quantity${proCount}" id="qty${proCount}">
 									</select>
   									</li>
   									<li class="list-group-item">商品庫存${pbt.unitStock}</li>
@@ -148,11 +143,9 @@
 	<!-- for bootstrap working -->
 <div class="container">
   		<h2 style="margin:20px; text-align:center;">有<c:out value="${proCount}"/>件商品</h2>                
-  		<h2 style="text-align:center;">共<c:out value="4"/>頁</h2>
-  		<ul class="pager">
-<!--    	 	<li><a href="#">Previous</a></li> -->
-<!--     		<li><a href="#">Next</a></li> -->
-  		</ul>
+  		<p style="text-align:center;">到第<select class="selectPage" id="selectPage"></select>頁</p>
+									
+  		<ul class="pager"></ul>
 </div>
 
 <!-- 先放這，放到head會導致modal無法使用 -->
@@ -160,30 +153,17 @@
 <%-- <script src="${pageContext.request.contextPath}/js/bootstrap.js"></script> --%>
 <script type="text/javascript">
 $(document).ready(function() {
-		var curWwwPath=window.document.location.href;
-		console.log(curWwwPath);
-		var pathName=window.document.location.pathname;
-		console.log(pathName);
-			
-		function getRealPath(){
-			var curWwwPath=window.document.location.href;
-			var pathName=window.document.location.pathname;
-			var projectName=pathName.substring(1,pathName.substr(1).indexOf('/')+1);
-			return projectName;
-		}	
-
-		
 // 		======================p下拉選單p==========================		
+		//S輸入商品數量
 		var optionList='';
 		for(var optionSet=1;optionSet<=10;optionSet++){
 			optionList+='<option>'+optionSet+'</option>';
 		}
-		console.log(optionList);
-		$(".selectpicker").html(optionList);
+		$(".selectQty").html(optionList);
 		
 // 		======================p分頁p==========================
 		
-		var pageSet = 4;//tip:每個分頁顯示的商品數量
+		var pageSet = 12;//tip:每個分頁顯示的商品數量
 		console.log( typeof(pageSet));//tip:typeof(pageSet)查看型態
 		var proCount = ${proCount};//tip:商品數量
 		var page = 1;//tip:設定第一頁頁碼
@@ -199,9 +179,26 @@ $(document).ready(function() {
 		}
 		pageList+='<li class=\"listPaper\" id=\"listPaper\"><button class=\"pageNext ui-button ui-widget ui-corner-all\" id=\"pageNext\">下一頁</button></li><li class=\"listPaper\" id=\"listPaper\"><button class=\"btLi ui-button ui-widget ui-corner-all \" id=\"pageLast\">頁尾</button></li>';
 		$(".pager").html(pageList);
-		
+
 		var btLi = $(".btLi"); //tip:將同名class以List儲存,故提取時可以用.get(0)、get(1)、get(n)
-		console.log(btLi);// tip:此List[btn頁首、btn0、btn1、btn2、btn3、btn頁尾]
+		console.log(btLi);// tip:此List[btn頁首、btn0、btn1、btn2、btn3、btn頁尾]		
+		
+		
+		//p輸入頁碼下拉選單
+		var pageNo='';
+		for(var pageNoSet=1;pageNoSet<=totalPage;pageNoSet++){
+			pageNo+='<option>'+pageNoSet+'</option>';
+		}
+		$(".selectPage").html(pageNo);		
+		
+		$(".selectPage").change(function(){
+			page = $("#selectPage").val();
+			var pageBtn = $("#btLi"+page);
+			showPagePros(page);
+			removeLightBtn()
+			lightBtn(pageBtn)
+		});		
+
 		
 // 		高亮顯示第一頁的按鈕	
 		if(totalPage>0){
