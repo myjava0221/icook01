@@ -21,9 +21,6 @@
 <meta name="keywords"
 	content="Truckage Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 <link href="${pageContext.request.contextPath}/css/style.css"
 	rel="stylesheet" type="text/css" media="all" />
@@ -33,12 +30,10 @@
 	rel="stylesheet" type="text/css" media="all" />
 <link href="${pageContext.request.contextPath}/css/jquery-ui.css"
 	rel="stylesheet" type="text/css" media="all" />
-<!-- <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script> -->
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="${pageContext.request.contextPath}/js/bootstrap.js"></script>
-<!-- //js -->
-<!-- load-more -->
+	
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
 <link
 	href='//fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic'
 	rel='stylesheet' type='text/css'>
@@ -100,16 +95,16 @@
 							Add To Car
 					</button>
 <%-- 						<a  href="<spring:url value='/productList/productDetail?productID=${pros.productID}&type=${pbt.typeID}'/>" class="btn btn-primary" style="color:#fff;">詳細資訊</a> --%>
- 					<button type="button" class="btn btn-primary useModal" data-toggle="modal" data-target="#myModal${proCount}">詳細資訊</button>
+ 					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal${proCount}">詳細資訊</button>
 
- 					<!-- Modal商品明細 aria-hidden="true" data-backdrop="static"設定後,只能用[X]or Close來關閉Modal --> 
-  					<div class="modal fade thisModal" id="myModal${proCount}" role="dialog" aria-hidden="true" data-backdrop="static">
+ 					<!-- Modal商品明細  可加入aria-hidden="true" data-backdrop="static"設定後,只能用[X]or Close來關閉Modal --> 
+  					<div class="modal fade myModal" id="myModal${proCount}" role="dialog">
     					<div class="modal-dialog">
     
       					<!-- Modal content商品明細內容-->
       					<div class="modal-content">
         					<div class="modal-header">
-          					<button type="button" class="close useClose" data-dismiss="modal">&times;</button>
+          					<button type="button" class="close" data-dismiss="modal">&times;</button>
           					<h4 class="modal-title">愛料理商品</h4>
         					</div>
         					<div class="modal-body">
@@ -120,18 +115,16 @@
   									<li class="list-group-item">商品單價:${pbt.unitPrice}</li>
   									<li class="list-group-item">商品折扣:${pbt.discount}</li>
   									<li class="list-group-item">商品特價:<fmt:formatNumber pattern="#0" value="${pbt.unitPrice*pbt.discount}" type="currency" /></li>
-  									<li class="list-group-item">購買數量:<input style="margin:5px;" type="number" class="products${proCount} quantity${proCount}" id="qty${proCount}" value="1" min="1" max="99" /></li>
-  									<li class="list-group-item">
-  									  <div class="dropdown">
-    									<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
-    									<span class="caret"></span></button>
-    									<ul class="dropdown-menu">
-      										<li>HTML</li>
-      										<li>CSS</li>
-      										<li>JavaScript</li>
-    									</ul>
- 									   </div>
- 									</li>
+<%--   									<li class="list-group-item">購買數量:<input style="margin:5px;" type="number" class="products${proCount} quantity${proCount}" id="qty${proCount}" value="1" min="1" max="99" /></li> --%>
+  									<li class="list-group-item">購買數量:
+  									<select class="selectpicker products${proCount} quantity${proCount}" id="qty${proCount}">
+<!--   										<option>1</option> -->
+<!--   										<option>2</option> -->
+<!--   										<option>3</option> -->
+<!--   										<option>4</option> -->
+<!--   										<option>5</option> -->
+									</select>
+  									</li>
   									<li class="list-group-item">商品庫存${pbt.unitStock}</li>
   									<li class="list-group-item"><button name="cmd" id="press${proCount}" class="addToCar btn btn-primary">
 												Add To Car
@@ -139,7 +132,7 @@
 								</ul>			
         					</div>
         					<div class="modal-footer">
-          					<button type="button" class="btn btn-default useClose" data-dismiss="modal">Close</button>
+          					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         					</div>
       					</div>
       
@@ -161,6 +154,10 @@
 <!--     		<li><a href="#">Next</a></li> -->
   		</ul>
 </div>
+
+<!-- 先放這，放到head會導致modal無法使用 -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<%-- <script src="${pageContext.request.contextPath}/js/bootstrap.js"></script> --%>
 <script type="text/javascript">
 $(document).ready(function() {
 		var curWwwPath=window.document.location.href;
@@ -174,6 +171,15 @@ $(document).ready(function() {
 			var projectName=pathName.substring(1,pathName.substr(1).indexOf('/')+1);
 			return projectName;
 		}	
+
+		
+// 		======================p下拉選單p==========================		
+		var optionList='';
+		for(var optionSet=1;optionSet<=10;optionSet++){
+			optionList+='<option>'+optionSet+'</option>';
+		}
+		console.log(optionList);
+		$(".selectpicker").html(optionList);
 		
 // 		======================p分頁p==========================
 		
@@ -256,10 +262,6 @@ $(document).ready(function() {
 
 // 		隱藏前進後退按鈕,設定2秒(2000毫秒)
 		function hidePreNext(){
-			console.log("Hide");
-			console.log("page:"+page);
-			console.log("page==0:"+(page==0));
-			console.log("totalPage:"+totalPage);
 			if(page==totalPage){
 				$("#pageNext").hide(2000);	
 				$("#pageLast").hide(2000);
@@ -289,31 +291,19 @@ $(document).ready(function() {
 		}
 // ========================a加入購物車a=========================		
 	//m判斷是否使用modal
-		var useModalDe = false;
-		$(".useModal").click(function(){
-			console.log("useModal");
-			useModalDe = true;
-		})
-    //m判斷是否開啟modal視窗(未完成)
-   $('#myModal1').on('shown.bs.modal', function (e) {
-      console.log("mmmmmmmmmmmmmmmm");
-      alert("hhhhh");
+		var useModal = false;
+		
+    //m判斷是否開啟modal視窗,有開啟就將useModal設為true
+   $('.myModal').on('shown.bs.modal', function (e) {
+      	console.log("openModal1");
+      	useModal = true;
    })
 	
-    //m判斷是否關閉 modal視窗(未完成)
-		
-	//c判斷是否點[x] or close關閉modal
-		$(".useClose").click(function(){
-			console.log("useClose");
-			useModalDe = false;
-		})
-		
-// 		$(".thisModal").modal({
-// 			//s點擊空白處不關閉
-// 			backdrop:"static",
-// 			keyboard: false
-// 		})
-		
+ //m判斷是否關閉 modal視窗,關閉就將useModal設為false
+	$('.myModal').on('hidden.bs.modal', function () {
+		console.log("hiddenModal1");
+		useModal = false;
+	})   
 		$(".addToCar").click(function(){
 			alert("加入購物車成功");
 			var id = $(this).attr("id");
@@ -321,14 +311,13 @@ $(document).ready(function() {
 			var	index = id.replace("press","");
 			var	quantity = $(".quantity"+index);
 			var qty = 0;
-			if(useModalDe){
+			if(useModal){
 				qty = $(quantity.get(1)).val()
 			}else{
 				qty = $("#qty"+index).val();
 			}
-			console.log("useModalDe:"+useModalDe);
+			console.log("useModal:"+useModal);
 			console.log("qty:"+qty);
-			useModalDe = false;
 			var product = { 
 					  productId   : $("#productId"+index).val(),
 					  productName : $("#productName"+index).val(),
