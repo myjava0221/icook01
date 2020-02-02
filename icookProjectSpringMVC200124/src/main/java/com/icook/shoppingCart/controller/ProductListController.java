@@ -105,7 +105,7 @@ public class ProductListController {
 
 	@PostMapping(value="shoppingCart/addToCar")
 	@ResponseBody
-		public ModelAndView addToCar(
+		public int addToCar(
 				@ModelAttribute("orderItem") orderItem oib, 
 				HttpServletRequest request,
 				HttpServletResponse response
@@ -148,14 +148,15 @@ public class ProductListController {
 		System.out.println(request.getServletPath());
 		System.out.println(request.getContextPath());
 		System.out.println("headernames:"+request.getHeaderNames());
-		if(productName!=null) {
-//			呼叫StringToHex(中文字串)，將中文字串轉16進制
-			mv.setViewName("redirect:productList?productName="+StringToHex(productName));
-			return mv;
-		}else{
-			mv.setViewName("shoppingCart/productList");
-			return mv;
-		}
+//		if(productName!=null) {
+////			呼叫StringToHex(中文字串)，將中文字串轉16進制
+//			mv.setViewName("redirect:productList?productName="+StringToHex(productName));
+//			return mv;
+//		}else{
+//			mv.setViewName("shoppingCart/productList");
+//			return mv;
+//		}
+		return cart.getItemNumber();
 	}
 
 	

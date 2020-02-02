@@ -48,6 +48,7 @@
 		<table class="table table-hover">
 <!-- 			<tr style="background-color: #a8fefa"> -->
 			<tr class="success">
+				<th><input type="checkbox" class="form-check-input"/>
 				<th class=trHead>產品編號
 				<th class="trHead">產品名稱
 				<th class="trHead">單價
@@ -60,6 +61,7 @@
 				<c:forEach  items="${ShoppingCart.content}" var="cart"
 						varStatus="vs">
 						<tr class="success" id="trIndex${vs.index}">
+							<td><input type="checkbox" class="form-check-input" id="form-check-input${vs.index}"/>
 							<td>${cart.value.productId}
 							<td>${cart.value.describe}
 							<td id="unitPrice${vs.index}">NT<fmt:formatNumber
@@ -89,7 +91,7 @@
 					</c:forEach>
 			<form action="${pageContext.request.contextPath}/ShoppingCar/OrderCheck" method="GET">		
 			<tr class="success">
-				<td colspan="9"><input type="submit" id="submit" value="確定購買" />
+				<td colspan="10"><input type="submit" id="submit" value="確定購買" />
 			</form>
 		</table>
 </div>
@@ -97,7 +99,26 @@
 <script>
 	$(document).ready(function() {
 		// 	$(window).load(function() {
-
+		$(".form-check-input").change(function() {
+		      if(this.checked) {
+		    	  console.log("打勾囉!");
+		    	  console.log(this);
+		      }
+// 			$('.form-check-input').each(function() {
+// 				if ($(this).attr('checked') ==true) {
+// 				 		console.log($(this));
+// 				 	}
+// 				 });		      
+		});
+		
+		// d獲取多個checkbox選中項
+		 $('.form-check-input').each(function() {
+			 if ($(this).attr('checked') ==true) {
+		 			console.log($(this));
+		 		}
+		 });		
+		
+			
 		$(".item-qty-button-plus").click(function() {
 			var id = $(this).attr("id");
 			var index = id.substring(4);
