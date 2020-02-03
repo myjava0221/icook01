@@ -74,7 +74,6 @@
 			<c:set var="proCount" value="${proCount+1}" />
 			<div class="products col-md-3 top_brand_left" id="divTop${proCount}">
 			<div class="agile_top_brand_left_grid">
-<!-- 			<div class="agile_top_brand_left_grid1"> -->
 				<c:set var="image1" value="${pageContext.request.contextPath}/${imgArray[vs2.index]}" scope="session"></c:set>				
 				<p><img width="200px" height="200" src="${pageContext.request.contextPath}/${imgArray[vs2.index]}"></img></p>
 				<c:set var="pbt" value="${pbt}" scope="session" />
@@ -133,12 +132,10 @@
       
     					</div>
   					</div>
-<!-- 				</div> -->
 				</div>
 				</div>
 			</c:forEach>
 		</c:forEach>
-	
 </div>
 	
 <div class="container containerPage">
@@ -266,18 +263,9 @@ $(document).ready(function() {
 // 		頁碼按鈕
 // 		testBtnEach();
 		$(".btLi").click(function(){
-			
-			
 			var id = $(this).attr("id");
 			var Index = Number(id.replace("btLi",""))
-			
-			var selectIndex=Index;
-			$('#selectPage option').get(selectIndex-1).selected = true;
-			
 			var thisBtn = $(this);
-			console.log("id:"+id);
-			console.log("page:"+page);
-			console.log("finalPage:"+finalPage);
 			if(id=="pageFirst"){
 				page = 1;
 				thisBtn = $($(".btLi").get(1));
@@ -287,7 +275,7 @@ $(document).ready(function() {
 				thisBtn = $($(".btLi").get(finalPage));
 			}
 			else {page = Index;}
-			console.log("pageBtn:"+page);
+			$('#selectPage option').get(page-1).selected = true;
 			showPagePros();
 			removeLightBtn()
 			lightBtn(thisBtn);
@@ -296,9 +284,9 @@ $(document).ready(function() {
 // 		上一頁按鈕
 		$("#pagePre").click(function(){
 			if(page>1){page--;}
+			$('#selectPage option').get(page-1).selected = true;
 			showPagePros();
 			removeLightBtn()
-			console.log("page:"+page);
 			lightBtn($($(".btLi").get(page)));
 // 			hidePreNext();
 		})	
@@ -306,9 +294,9 @@ $(document).ready(function() {
 // 		下一頁按鈕
 		$("#pageNext").click(function(){
 			if(page<totalPage){page++;}
+			$('#selectPage option').get(page-1).selected = true;
 			showPagePros();
 			removeLightBtn()
-			console.log("page:"+page);
 			lightBtn($($(".btLi").get(page)));
 // 			hidePreNext();
 		})		
@@ -407,7 +395,6 @@ $(document).ready(function() {
 // 			否則就算有註解,${ShoppingCart}雖然不會有事,但${ShoppingCart.itemNumber}一定會死給你看,千萬要小心
 // 			alert("加入購物車成功");
 			console.log("加入購物車成功");
-			console.log("${ShoppingCart.itemNumber}");
 			$("#cartNo").load("");
 		})
 // 		=======================s每x毫秒刷新頁面s==========================			
@@ -426,6 +413,7 @@ $(document).ready(function() {
 				success:function(data){   //成功後回傳的資料data,目前沒用到不理他
 // 					showNames(data);
 					outputData;
+					$("#cartNo").text(data);
 				},
 				error:function(err){ //發生伺服器404、500、304等錯誤時會用此function處理,err封裝錯誤訊息
 					console.log(err);
@@ -435,15 +423,15 @@ $(document).ready(function() {
 
 	
 		function refresh(){ 
-	    //update src attribute with a cache buster query 
-	    setTimeout("refresh();",10) 
+	    	//update src attribute with a cache buster query 
+	    	setTimeout("refresh();",10) 
 		} 	
 		function updata(upData){ 
 		   	//Get new content through Ajax 
 			   $("#cartNo").text(upData);
 		   		console.log($("#cartNo"));
 			} 
-//		 	setInterval(updateDiv, 3000);//設定每3000毫秒更新updata()
+//		setInterval(updateDiv, 3000);//設定每3000毫秒更新updata()
 
 // 		=======================s測試區s==========================
 // 		01測試$.each,目前沒用到

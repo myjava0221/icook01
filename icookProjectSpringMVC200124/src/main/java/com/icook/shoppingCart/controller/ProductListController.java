@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.icook.model.ProductBean;
 import com.icook.model.ShoppingCart;
 import com.icook.model.orderItem;
@@ -35,10 +36,14 @@ public class ProductListController {
 		this.service = service;
 	}
 	
-//	@PostMapping(value = "fragment/TopNav")
-//	public String test() {
-//		return "fragment/TopNav";
-//	}
+	@GetMapping(value = "/productSearch")
+	public String productSearch_get() {
+		return "shoppingCart/productSearch";
+	}
+	@PostMapping(value = "/productSearch")
+	public String productSearch_post() {
+		return "shoppingCart/productSearch";
+	}
 	
 	@GetMapping(value = "shoppingCart/productList")
 	public String productList_get(Model model, HttpServletRequest request) {
@@ -113,8 +118,6 @@ public class ProductListController {
 		ModelAndView mv = new ModelAndView();
 		System.out.println("進入controller加入購物車");
 		HttpSession session = request.getSession(false);
-		Gson gson = new Gson(); 
-		
 		String productName = request.getParameter("productName");
 		System.out.println("產品名:"+oib.getDescribe());
 		
@@ -187,7 +190,8 @@ public class ProductListController {
 		return "shoppingCart/shopCart";
 	}
 
-	@PostMapping(value = "shoppingCart/shopCart")
+	@PostMapping(value = "shoppingCart/shopCart" ,produces="application/json;charset=UTF-8")
+	@ResponseBody
 	public String UpdateICookServlet(Model model, @ModelAttribute("orderItem") orderItem oib,
 			HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession(false);
@@ -197,22 +201,37 @@ public class ProductListController {
 			cart = new ShoppingCart();
 			session.setAttribute("ShoppingCart", cart);
 		}
+		Gson gson = new Gson();
 		String cmd = request.getParameter("cmd");
-		System.out.println(cmd);
-		String pid_ptyStr = request.getParameter("mapKey");
-		String pid_pty = pid_ptyStr.trim();
+		
+//		String pid_ptyStr = request.getParameter("mapKey");
+//		String pid_pty = pid_ptyStr.trim();
+		String itemNumber = "";
 		System.out.println(request.getServletPath());
 		System.out.println(request.getContextPath());
 		if (cmd.equalsIgnoreCase("DEL")) {
-			cart.deleteProduct(pid_pty); // 刪除購物車內的某項商品
-			return "redirect:shopCart";
+			String pid_ptyStr = request.getParameter("mapKey");
+			//↑接收前端的JSON字串,之後用gson轉成List↓
+			List<String> pid_ptyStrList = gson.fromJson(pid_ptyStr, new TypeToken<List<String>>() {}.getType());
+			
+			for(int i=0;i<pid_ptyStrList.size();i++) {
+				cart.deleteProduct(pid_ptyStrList.get(i));
+			}
+//			cart.deleteProduct(pid_pty); // 刪除購物車內的某項商品
+			itemNumber = String.valueOf(cart.getItemNumber());
+			return itemNumber;
 		} else if (cmd.equalsIgnoreCase("MOD")) {
+			String pid_ptyStr = request.getParameter("mapKey");
+			String pid_pty = pid_ptyStr.trim();
 			String newQtyStr = request.getParameter("qty");
 			int newQty = Integer.parseInt(newQtyStr.trim());
 			cart.modifyQty(pid_pty, newQty); // 修改某項商品的數項
-			return "redirect:shopCart";
+			itemNumber = String.valueOf(cart.getItemNumber());
+			System.out.println("itemNumber:"+itemNumber);
+			return itemNumber;
 		}
-		return "redirect:shopCart";
+//		return "redirect:shopCart";
+		return itemNumber;
 	}
 	
 	//中文字串 轉 16進制
