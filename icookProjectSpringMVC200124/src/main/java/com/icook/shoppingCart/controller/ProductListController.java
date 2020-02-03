@@ -16,12 +16,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.icook.model.ProductBean;
 import com.icook.model.ShoppingCart;
 import com.icook.model.orderItem;
@@ -37,14 +36,25 @@ public class ProductListController {
 		this.service = service;
 	}
 	
-	@GetMapping(value = "/test")
-	public String test() {
-		return "fragment/test";
+	@GetMapping(value = "/productSearch")
+	public String productSearch_get() {
+		return "shoppingCart/productSearch";
+	}
+	@PostMapping(value = "/productSearch")
+	public String productSearch_post() {
+		return "shoppingCart/productSearch";
 	}
 	
 	@GetMapping(value = "shoppingCart/productList")
 	public String productList_get(Model model, HttpServletRequest request) {
 		System.out.println("進入controller1");
+		HttpSession session = request.getSession(false);
+		ShoppingCart cart = (ShoppingCart) session.getAttribute("ShoppingCart");
+		System.out.println("cart0:" + cart);
+		if (cart == null) {
+			cart = new ShoppingCart();
+			session.setAttribute("ShoppingCart", cart);
+		}
 		String productName = request.getParameter("productName");
 		List<ProductBean> products = new LinkedList<ProductBean>();
 		List<String[]> prosImg = new LinkedList<String[]>();
@@ -62,7 +72,6 @@ public class ProductListController {
 			
 		} else {
 			System.out.println("products is not null.");
-			System.out.println("哈哈" + productName);
 			products = service.queryProduct(productName);
 			for(ProductBean p : products) {
 				String imgString = p.getImage1().trim();
@@ -99,7 +108,7 @@ public class ProductListController {
 
 	@PostMapping(value="shoppingCart/addToCar")
 	@ResponseBody
-		public ModelAndView addToCar(
+		public int addToCar(
 				@ModelAttribute("orderItem") orderItem oib, 
 				HttpServletRequest request,
 				HttpServletResponse response
@@ -107,10 +116,7 @@ public class ProductListController {
 		ModelAndView mv = new ModelAndView();
 		System.out.println("進入controller加入購物車");
 		HttpSession session = request.getSession(false);
-		Gson gson = new Gson(); 
-		
 		String productName = request.getParameter("productName");
-		System.out.println("產品名:"+oib.getDescribe());
 		
 //		處理將空字串轉為null
 		if(oib.getDiscount().isEmpty() && oib.getDiscount().length()==0) {
@@ -121,46 +127,24 @@ public class ProductListController {
 			oib.setDiscount(discount.toString());
 		}
 		
-		System.out.println("折扣:"+oib.getDiscount());
 		ShoppingCart cart = (ShoppingCart) session.getAttribute("ShoppingCart");
 		System.out.println("cart:" + cart);
 		if (cart == null) {
 			cart = new ShoppingCart();
 			session.setAttribute("ShoppingCart", cart);
 		}
-		// productId和TypeId的型態都是Integer，我Map的Key需求是要上述2個字串以底線( "_" )串接。
 		String MapKey = oib.getProductId() + "_" + oib.getTypeId();
-		System.out.println("MapKey" + MapKey);
 		cart.addToCart(MapKey, oib);
-		System.out.println(request.getLocalPort());
-		System.out.println(request.getMethod());
-		System.out.println(request.getLocalAddr());
-		System.out.println(request.getPathInfo());
-		System.out.println(request.getQueryString());
-		System.out.println(request.getCookies());
-		System.out.println(request.getProtocol());
-		System.out.println(request.getServletPath());
-		System.out.println(request.getContextPath());
-		System.out.println("headernames:"+request.getHeaderNames());
-		if(productName!=null) {
-//			呼叫StringToHex(中文字串)，將中文字串轉16進制
-			mv.setViewName("redirect:productList?productName="+StringToHex(productName));
-			return mv;
-		}else{
-			mv.setViewName("shoppingCart/productList");
-			return mv;
-		}
+		return cart.getItemNumber();
 	}
 
 	
-	@RequestMapping(value = "shoppingCart/productDetail")
+	@RequestMapping(value = "/productList/productDetail")
 	public ModelAndView productDetail(
 			HttpServletRequest request,
 			HttpServletResponse response) {
 		System.out.println("進入controller");
-//		ProductBean pb = service.getProduct("1");
 		ModelAndView modelAndView = new ModelAndView("shoppingCart/productDetail");
-//		modelAndView.addObject("prob", pb);
 		return modelAndView;
 	}
 
@@ -168,7 +152,6 @@ public class ProductListController {
 	public String shoppingCart(Model model, @ModelAttribute("orderItem") orderItem oib, HttpServletRequest request) {
 		HttpSession session = request.getSession(false);
 		ShoppingCart cart = (ShoppingCart) session.getAttribute("ShoppingCart");
-		System.out.println("cart:" + cart);
 
 		if (cart == null) {
 			cart = new ShoppingCart();
@@ -180,7 +163,8 @@ public class ProductListController {
 		return "shoppingCart/shopCart";
 	}
 
-	@PostMapping(value = "shoppingCart/shopCart")
+	@PostMapping(value = "shoppingCart/shopCart" ,produces="application/json;charset=UTF-8")
+	@ResponseBody
 	public String UpdateICookServlet(Model model, @ModelAttribute("orderItem") orderItem oib,
 			HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession(false);
@@ -190,23 +174,32 @@ public class ProductListController {
 			cart = new ShoppingCart();
 			session.setAttribute("ShoppingCart", cart);
 		}
+		Gson gson = new Gson();
 		String cmd = request.getParameter("cmd");
-		System.out.println(cmd);
-		String pid_ptyStr = request.getParameter("mapKey");
-		String pid_pty = pid_ptyStr.trim();
-		System.out.println(request.getServletPath());
-		System.out.println(request.getContextPath());
+		
+//		String pid_ptyStr = request.getParameter("mapKey");
+//		String pid_pty = pid_ptyStr.trim();
+		String itemNumber = "";
 		if (cmd.equalsIgnoreCase("DEL")) {
-			cart.deleteProduct(pid_pty); // 刪除購物車內的某項商品
-			return "redirect:shopCart";
+			String pid_ptyStr = request.getParameter("mapKey");
+			List<String> pid_ptyStrList = gson.fromJson(pid_ptyStr, new TypeToken<List<String>>() {}.getType());
+			
+			for(int i=0;i<pid_ptyStrList.size();i++) {
+				cart.deleteProduct(pid_ptyStrList.get(i));
+			}
+			itemNumber = String.valueOf(cart.getItemNumber());
+			return itemNumber;
 		} else if (cmd.equalsIgnoreCase("MOD")) {
-			String index = request.getParameter("listIndex");
-			String newQtyStr = request.getParameter("qty" + index);
+			String pid_ptyStr = request.getParameter("mapKey");
+			String pid_pty = pid_ptyStr.trim();
+			String newQtyStr = request.getParameter("qty");
 			int newQty = Integer.parseInt(newQtyStr.trim());
 			cart.modifyQty(pid_pty, newQty); // 修改某項商品的數項
-			return "redirect:shopCart";
+			itemNumber = String.valueOf(cart.getItemNumber());
+			System.out.println("itemNumber:"+itemNumber);
+			return itemNumber;
 		}
-		return "redirect:shopCart";
+		return itemNumber;
 	}
 	
 	//中文字串 轉 16進制
@@ -224,7 +217,6 @@ public class ProductListController {
 		   String queryVariable="";
 	       for(int i=0;i<HexString.length();i+=2) {
 	    	   	queryVariable += "%"+HexString.substring(i,i+2);
-	        	System.out.println(queryVariable);
 	        }
 		   return queryVariable;
 		}

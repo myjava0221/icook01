@@ -6,6 +6,11 @@
 	border-collapse:collapse;
 }
 
+.pointBtnPage{
+	color:#FFF;
+	background-color:#337AB7;
+}
+
 .trHead{
 	font-weight:bold;
 	font-family:fantasy;

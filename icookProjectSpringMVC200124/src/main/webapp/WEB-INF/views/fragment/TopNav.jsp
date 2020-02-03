@@ -14,6 +14,8 @@
 	rel='stylesheet' type='text/css'>
 <link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic'
 	rel='stylesheet' type='text/css'>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>	
 <!-- //卡車套版 -->
 </head>
 
@@ -83,7 +85,7 @@
 										<li><a href=<c:url value='/recipes' />><span data-hover="Recipe">食譜</span></a></li>
 										<li><a href=<c:url value='/shoppingCart/productList' />><span data-hover="Market">市集</span></a></li>
 										<li><a href=<c:url value='/MyOrders/Orders?page=1'/>><span data-hover="Order">訂單</span></a></li>
-										<li><a href=<c:url value='/shoppingCart/shopCart' />><span data-hover="Car">購物車</span></a></li>
+										<li><a href=<c:url value='/shoppingCart/shopCart' />><span data-hover="Car">購物車<span class="badge" id="cartNo"></span></span></a></li>
 										<li><a href=<c:url value='/course/courseHomePage' />><span data-hover="course ">課程</span></a></li>
 										
 									</ul>
@@ -100,6 +102,8 @@
 	</header>
 	<!-- //header -->
 </body>
-
-
-
+<script>
+$(document).ready(function() {
+	$("#cartNo").text("${ShoppingCart.itemNumber}");
+})
+</script>

@@ -37,7 +37,7 @@
 			<div class="w3ls_banner_info">
 				<div class="wthree_more">
 					<a href=<c:url value='recipes' /> class="button--wayra button--border-thick button--text-upper button--size-s">找食譜</a>
-					<a href=<c:url value='/productList' /> class="button--wayra button--border-thick button--text-upper button--size-s">找商品</a>
+					<a href=<c:url value='/productSearch' /> class="button--wayra button--border-thick button--text-upper button--size-s">找商品</a>
 					<a href=<c:url value='/course/courseHomePage' /> class="button--wayra button--border-thick button--text-upper button--size-s">找課程</a>
 				</div>
 			</div>

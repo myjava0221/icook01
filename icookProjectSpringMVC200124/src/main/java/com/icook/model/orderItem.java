@@ -74,7 +74,7 @@ public class orderItem implements Serializable {
 			this.onSale = Double.valueOf(this.discount) * this.unitPrice/10;
 		}
 
-		return onSale;
+		return (double) Math.round(onSale);
 	}
 	public void setOnSale(Double onSale) {
 		this.onSale = onSale;
