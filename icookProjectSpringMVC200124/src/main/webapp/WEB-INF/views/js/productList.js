@@ -115,6 +115,7 @@ $(document).ready(function() {
 			var url = pageContext+"/shoppingCart/addToCar";
 			doAjax(url,product);
 			console.log("加入購物車成功");
+			alert("加入購物車成功");
 			$("#cartNo").load("");
 		})
 		
