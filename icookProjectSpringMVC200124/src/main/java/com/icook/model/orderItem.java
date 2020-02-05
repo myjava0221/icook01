@@ -67,7 +67,7 @@ public class orderItem implements Serializable {
 		this.unitPrice = unitPrice;
 	}
 	public Double getOnSale() {
-		float tranDiscount = 1;
+		double tranDiscount = 1;
 		if(this.discount==null || this.discount.isEmpty() || this.discount.length()==0) {
 			this.onSale =  tranDiscount * this.unitPrice;
 		}else{

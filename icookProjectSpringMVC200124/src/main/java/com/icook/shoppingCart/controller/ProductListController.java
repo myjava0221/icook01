@@ -203,21 +203,18 @@ public class ProductListController {
 		}
 		Gson gson = new Gson();
 		String cmd = request.getParameter("cmd");
-		
-//		String pid_ptyStr = request.getParameter("mapKey");
-//		String pid_pty = pid_ptyStr.trim();
+//		
 		String itemNumber = "";
 		System.out.println(request.getServletPath());
 		System.out.println(request.getContextPath());
 		if (cmd.equalsIgnoreCase("DEL")) {
 			String pid_ptyStr = request.getParameter("mapKey");
+			System.out.println("pid_ptyStr:"+pid_ptyStr);
 			//↑接收前端的JSON字串,之後用gson轉成List↓
 			List<String> pid_ptyStrList = gson.fromJson(pid_ptyStr, new TypeToken<List<String>>() {}.getType());
-			
 			for(int i=0;i<pid_ptyStrList.size();i++) {
 				cart.deleteProduct(pid_ptyStrList.get(i));
 			}
-//			cart.deleteProduct(pid_pty); // 刪除購物車內的某項商品
 			itemNumber = String.valueOf(cart.getItemNumber());
 			return itemNumber;
 		} else if (cmd.equalsIgnoreCase("MOD")) {

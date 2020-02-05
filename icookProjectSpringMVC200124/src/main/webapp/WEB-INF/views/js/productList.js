@@ -1,7 +1,7 @@
 $(document).ready(function() {
 	
-//		======================p輸入商品數量select p==========================		
-	//S輸入商品數量
+//		======================輸入商品數量select==========================		
+	//輸入商品數量
 		var optionList='';
 		for(var optionSet=1;optionSet<=10;optionSet++){
 			optionList+='<option>'+optionSet+'</option>';
@@ -12,15 +12,15 @@ $(document).ready(function() {
 		
 		var pageSet = 8;//tip:每個分頁顯示的商品數量
 		console.log( typeof(pageSet));//tip:typeof(pageSet)查看型態
-		var proCount = 100;//tip:商品數量
+		var proCount = $("#proCount").val();//tip:商品數量
 		
-		//tip: 總頁數 , Math.ceil()=無條件進位
+		//總頁數 , Math.ceil()=無條件進位
 		var totalPage = Math.ceil(proCount/pageSet);
 		
 		var page = 1;//tip:設定第一頁頁碼
 		var reloadCount = false;
 		
-		//ss調整顯示商品筆數(未完)
+		//調整顯示商品筆數(未完)
 		$(".selectCountPage").change(function(){
 			pageSet = $("#selectCountPage").val();
 			console.log("pageSet:"+pageSet);
@@ -53,8 +53,7 @@ $(document).ready(function() {
 		var btLi = $(".btLi"); //tip:沒用到,將同名class以List儲存,故提取時可以用.get(0)、get(1)、get(n)
 		console.log(btLi);// tip:此List[btn頁首、btn0、btn1、btn2、btn3、btn頁尾]		
 		
-		
-		//p產生到第X頁輸入頁碼
+		//產生到第X頁輸入頁碼
 		function entryPage(){
 			var pageNo='';
 			for(var pageNoSet=1;pageNoSet<=totalPage;pageNoSet++){
@@ -64,6 +63,9 @@ $(document).ready(function() {
 		}
 		entryPage();
 		
+		
+		
+		//select變更頁碼時
 		$(".selectPage").change(function(){
 			page = $("#selectPage").val();
 			var pageBtn = $("#btLi"+page);
@@ -77,7 +79,7 @@ $(document).ready(function() {
 		if(totalPage>0){
 			lightBtn($($(".btLi").get(1)));
 	}		
-// 		hidePreNext(page);//tip:載入時顯示or隱藏的按鈕
+// 		hidePreNext(page);//載入時顯示or隱藏的按鈕
 		
 		function selectedSet(){
 		//  先取得要移除項目的 index

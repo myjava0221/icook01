@@ -1,7 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8" import="java.util.*"
-	import="com.icook.model.orderItem"
-	import="com.icook.model.ShoppingCart"
 	import="com.icook.model.ProductTypeBean"
 	import="com.icook.model.ProductBean"
 %>
@@ -18,9 +16,6 @@
 <!-- for-mobile-apps -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="keywords"
-	content="Truckage Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
-
 
 <link href="${pageContext.request.contextPath}/css/style.css"
 	rel="stylesheet" type="text/css" media="all" />
@@ -30,16 +25,27 @@
 	rel="stylesheet" type="text/css" media="all" />
 <link href="${pageContext.request.contextPath}/css/jquery-ui.css"
 	rel="stylesheet" type="text/css" media="all" />
-	
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
-<link
-	href='//fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic'
-	rel='stylesheet' type='text/css'>
-<link
-	href='//fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic'
-	rel='stylesheet' type='text/css'>
+  <style>
+  .Block_shadow_1:hover {
+       /* 加粗的陰影外框 */
+        -moz-box-shadow: 0 0 2px 2px #888;
+        -webkit-box-shadow: 0 0 2px 2px #888;
+        box-shadow: 0 0 2px 2px #5599FF;
+/*         width:26%; */
+        border-color:#5599FF !important;
+/*         設定hover的變更速度,格式:[指定元素    秒數] */
+/*         transition:width 1s; */
+/*         background-color:#5599FF; */
+}
+  
+  .carousel-inner > .item > img,
+  .carousel-inner > .item > a > img {
+    width: 70%;
+    margin: auto;
+}
+  </style>
 </head>
 <body>
 	<jsp:include page="/WEB-INF/views/fragment/TopNav.jsp" />
@@ -47,23 +53,20 @@
 	
 	<!-- 搜尋功能 -->
 	<div class="container align-items-center">
-		<fieldset >
+		<fieldset>
 			<form  method="GET" action="productList" class="form-horizontal" style="text-align: center">
 				<div class="form-group row">
 				<input class="form-control" type="text" id="productName"
 					placeholder="請輸入關鍵字" aria-label="Search" name="productName"/>
-				&nbsp;&nbsp;<button class="btn btn-outline-success">Search</button>
+				&nbsp;&nbsp;<button class="btnSearch btn btn-outline-success">Search</button>
 				</div>
 			</form>
 		</fieldset>
 	</div>
 
 
-<div class="container-fluid prosDiv">
-<!-- 	<p>1第一層迴圈forEach取productBean</p> -->
-<!-- 	<p>2 迴圈中用core的Set設定ProductBean的type資料(Set陣列)</p> -->
-<!-- 	<p>3用將此Set用toArray(new ProductTypeBean)轉成陣列後，放入List,放入sessionScope</p> -->
-<!-- 	<p>4第二層迴圈 forEach取producTypetBean的資料</p> -->
+<div class="prosDiv container-fluid" style="text-align:center;">
+	<fieldset>
 		<c:forEach items="${prosList}" var="pros" varStatus="vs">
 			<c:set var="prodsSet" value="${pros.type}"></c:set>
 <%-- 			<c:set var="pros" value="${pros}"></c:set> --%>
@@ -72,10 +75,9 @@
 			<c:forEach items="${prodsSet}" var="pbt" varStatus="vs2">
 <!-- 			proCount是紀錄商品數量,並作為索引代號 -->
 			<c:set var="proCount" value="${proCount+1}" />
-			<div class="products col-md-3 top_brand_left" id="divTop${proCount}">
-			<div class="agile_top_brand_left_grid">
+			<div class="products col-md-3 col-lg-4 Block_shadow_1" style="background-color:#CFDD8E;border:solid 1px;margin:3px;padding:1rem;text-align:center;" id="divTop${proCount}">
 				<c:set var="image1" value="${pageContext.request.contextPath}/${imgArray[vs2.index]}" scope="session"></c:set>				
-				<p><img width="200px" height="200" src="${pageContext.request.contextPath}/${imgArray[vs2.index]}"></img></p>
+				<p><img width="200px" height="200" class="img-circle" src="${pageContext.request.contextPath}/${imgArray[vs2.index]}"></img></p>
 				<c:set var="pbt" value="${pbt}" scope="session" />
 				<p>${pros.productName}</p>
 				<p>${pros.category}</p>
@@ -111,9 +113,10 @@
   									<li class="list-group-item"><img width="200px" height="200px" src="${pageContext.request.contextPath}/${imgArray[vs2.index]}"></img></li>
   									<li class="list-group-item">商品名稱:${pros.productName}</li>
   									<li class="list-group-item">商品資訊:${pros.productInfo}</li>
-  									<li class="list-group-item">商品單價:${pbt.unitPrice}</li>
-  									<li class="list-group-item">商品折扣:${pbt.discount}</li>
-  									<li class="list-group-item">商品特價:<fmt:formatNumber pattern="#0" value="${pbt.unitPrice*pbt.discount}" type="currency" /></li>
+  									<li class="list-group-item">單價:${pbt.unitPrice}</li>
+  									<li class="list-group-item">優惠:${pbt.discount}</li>
+  									<li class="list-group-item">優惠價:<fmt:formatNumber pattern="#0" value="${pbt.unitPrice*pbt.discount}" type="currency" /></li>
+<%--   									<li class="list-group-item">優惠價:<fmt:formatNumber pattern="#0" value="${pbt.unitPrice*pbt.discount}" type="currency" /></li> --%>
 <%--   									<li class="list-group-item">購買數量:<input style="margin:5px;" type="number" class="products${proCount} quantity${proCount}" id="qty${proCount}" value="1" min="1" max="99" /></li> --%>
   									<li class="list-group-item">購買數量:
   									<select class="selectpicker selectQty products${proCount} quantity${proCount}" id="qty${proCount}">
@@ -133,9 +136,9 @@
     					</div>
   					</div>
 				</div>
-				</div>
 			</c:forEach>
 		</c:forEach>
+	</fieldset>
 </div>
 	
 <div class="container containerPage">
@@ -151,6 +154,7 @@
   		<ul class="pager"></ul>
 </div>
 <input type="hidden" id="pageContext" value="${pageContext.request.contextPath}">
+<input type="hidden" id="proCount" value="${proCount}">
 
 <!-- for bootstrap working -->
 <!-- 先放這，放到head會導致modal無法使用 -->

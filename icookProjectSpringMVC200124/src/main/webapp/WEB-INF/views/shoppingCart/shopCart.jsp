@@ -31,251 +31,65 @@
 	rel="stylesheet" type="text/css" media="all" />
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<!-- //js -->
-<!-- load-more -->
-<link
-	href='//fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic'
-	rel='stylesheet' type='text/css'>
-<link
-	href='//fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic'
-	rel='stylesheet' type='text/css'>
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/fragment/TopNav.jsp" />
 
 <div class="container">
 <!-- 		<table id="shopCarTable" border="1"> -->
-		<table class="sc_table table table-hover" id="sc_table">
+		<table class="sc_table table table-hover" id="sc_table" style="margin:0px auto;">
 <!-- 			<tr style="background-color: #a8fefa"> -->
 			<tr class="success">
-				<th><input type="checkbox" class="leaderCheckBox"/>
-				<th class=trHead>產品編號
-				<th class="trHead">產品名稱
-				<th class="trHead">單價
-				<th class="trHead">折扣
-				<th class="trHead">特價
-				<th class="trHead">數量
-				<th class="trHead">小計
-				<th class="trHead">修改
-				<th class="trHead">刪除
+				<th class="trHead" width="5%"><input type="checkbox" class="leaderCheckBox" style="zoom:150%;"/>
+				<th class="trHead" width="15%">產品名稱
+				<th class="trHead" width="15%">單價
+				<th class="trHead" width="10%">優惠
+				<th class="trHead" width="15%">特價
+				<th class="trHead" width="14%">數量
+				<th class="trHead" width="16%">小計
+				<th class="trHead" width="10%" colspan="2">編輯
+<!-- 				<th class="trHead" width="5%">刪除 -->
 				<c:forEach  items="${ShoppingCart.content}" var="cart"
 						varStatus="vs">
-						<tr class="success" id="trIndex${vs.index}">
-							<td><input type="checkbox" class="form-check-input" name="doCheckbox" id="form-check-input${vs.index}" value="${cart.key}"/>
-							<td>${cart.value.productId}
+						<tr class="trIndex success" id="trIndex${vs.index}">
+							<td><input type="checkbox" class="fromCheck" style="zoom:120%;" name="doCheckbox" id="fromCheck${vs.index}" value="${cart.key}"/>
+<%-- 							<td><span>${cart.value.productId}</span> --%>
 							<td>${cart.value.describe}
-							<td id="unitPrice${vs.index}">NT<fmt:formatNumber
-									pattern="#0" value="${cart.value.unitPrice}" type="currency" />
-							<td id="discount${vs.index}">${cart.value.discount}
-							<td id="onSale${vs.index}">NT<fmt:formatNumber pattern="#0" value="${cart.value.onSale}" type="currency" /> 
+							<td id="unitPrice${vs.index}"><fmt:formatNumber
+									pattern="#0" value="${cart.value.unitPrice}" type="currency" />元
+							<td class="discount" id="discount${vs.index}"><fmt:formatNumber
+									pattern="#0.0" value="${cart.value.discount}" type="currency" />折
+							<td id="onSale${vs.index}"><fmt:formatNumber pattern="#0" value="${cart.value.onSale}" type="currency" />元
 							<td>
 								<div class="list-cart-notice-wrap">
 									<div class="item-qty-control">
-										<button type="button" title="減少" id="minus${vs.index}"
+										<button title="減少" id="minus${vs.index}"
 											class="item-qty-button item-qty-button-minus">-</button>
-										<input type="text" name="qty${vs.index}" id="qty${vs.index}" class="item-qty-input"
-											value="${cart.value.qty}" readonly="readonly">
-
-										<button type="button" title="增加" id="plus${vs.index}"
+										<input type="text" name="qty${vs.index}" id="qty${vs.index}" 
+											class="item-qty-input" value="${cart.value.qty}" readonly="readonly">
+										<button title="增加" id="plus${vs.index}"
 											class="item-qty-button item-qty-button-plus">+</button>
 									</div>
 								</div>
 							</td>
-							<td id="subTotal${vs.index}"><fmt:formatNumber pattern="#0"
+							<td id="subTotal${vs.index}" style="text-align:right;"><fmt:formatNumber pattern="#0"
 									value="${cart.value.unitPrice * cart.value.qty}"
-									type="currency" /> 
-							<td><button name="cmd" class="MOD" id="MOD${vs.index}"  value="MOD">修改</button>
-							<td><button name="cmd" class="DEL" id="DEL${vs.index}"  value="DEL">刪除</button>
+									type="currency" />元
+							<td><img name="cmd" class="MOD" id="MOD${vs.index}" width="24px" style="cursor:pointer;" src="${pageContext.request.contextPath}/images/edit.png"/>
+<%-- 							<td><button name="cmd" class="DEL" id="DEL${vs.index}"  value="DEL">刪除</button> --%>
+							<td><img name="cmd" class="DEL" id="DEL${vs.index}" width="24px" style="cursor:pointer;" src="${pageContext.request.contextPath}/images/recycle_bin2.png"/>
 									<input type="hidden" id="mapKey${vs.index}" name="mapKey${vs.index}" value="${cart.key}"/>
 									<input type="hidden" id="listIndex${vs.index}" name="listIndex${vs.index}" value="${vs.index}" />
 					</c:forEach>
-			<form action="${pageContext.request.contextPath}/ShoppingCar/OrderCheck" method="GET">		
+			<form id="formSubmit" action="" method="GET">		
 			<tr class="success">
-				<td colspan="10"><input type="submit" id="submit" value="確定購買" />
+				<td colspan="9"><input type="submit" id="submit" value="確定購買" />
 								 <input type="button" id="dd" value="刪除" />
 			</form>
 		</table>
 </div>
+<div id="demo"></div>
+<input type="hidden" id="pageContext" value="${pageContext.request.contextPath}">
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/shopCart.js"></script>
 </body>
-<script>
-	$(document).ready(function() {
-		// 	$(window).load(function() {
-		console.log($("#trIndex0").children('td').eq(0));
-		console.log($("#trIndex1").children('td'));
-		console.log($("#trIndex1").children('td').get(2));
-		console.log($("#trIndex1").children('td').get(2).val);
-		
-		$(".item-qty-button-plus").click(function() {
-			var id = $(this).attr("id");
-			var index = id.substring(4);
-			var onSale = $("#onSale"+index).text();
-			onSale = onSale.substring(2);
-			var qty = $("#qty" + index).val();
-			if (qty < 99) {
-				qty = Number(qty) + 1;
-			}
-			
-			$("#qty" + index).val(qty);
-			$("#subTotal" + index).text(qty * onSale);
-		})
-
-		$(".item-qty-button-minus").click(function() {
-			var id = $(this).attr("id");
-			var index = id.substring(5);
-			var onSale = $("#onSale" + index).text();
-			onSale = onSale.substring(2);
-			var qty = $("#qty" + index).val();
-			if (qty > 1) {
-				qty = Number(qty) - 1;
-			}
-			$("#qty" + index).val(qty);
-			$("#subTotal" + index).text(qty * onSale);
-		})
-		
-
-		$("#submit").click(function() {
-			if(confirm("確定購買 ?") ) {
-				return true;
-			}else{
-				return false;
-			}
-		})
-		
-
-// 		修改商品
-		$(".MOD").click(function() {
-			var id = $(this).attr("id");
-			var index = index = id.replace("MOD","");
-			var updateProducts = 
-			{
-				mapKey:$("#mapKey"+index).val(),
-				cmd   :$("#MOD"+index).val(),
-				qty	  :$("#qty"+index).val(),
-			}
-			if(confirm("確定修改嗎 ?") ) {
-				$.ajax({
-					url:"${pageContext.request.contextPath}/shoppingCart/shopCart",//後端controller的URL
-					type:"POST",//用POST的方式
-					dataType: "text",
-					data: updateProducts,
-					success:function(data){   //成功後回傳的資料data,目前沒用到不理他
-						console.log(data);
-						$("#cartNo").text(data);
-					},
-					error:function(err){ //發生伺服器404、500、304等錯誤時會用此function處理,err封裝錯誤訊息
-						console.log(err);
-					}
-				});
-				
-			//按下修改or刪除時，重新載入此頁，更新購物車數量
-				$("#cartNo").load("");
-				return true;
-			}else{
-				return false;
-			}
-		})
-		
-		
-	//刪除商品
-		$(".DEL").click(function() {
-			var id = $(this).attr("id");
-			var index = index = id.replace("DEL","");
-			console.log(index);
-			
-			var deleteProducts = 
-			{
-				mapKey:$("#mapKey"+index).val(),
-				cmd   :$("#DEL"+index).val(),
-			}
-			
-			if(confirm("確定刪除此商品 ?") ) {
-				$.ajax({
-					url:"${pageContext.request.contextPath}/shoppingCart/shopCart",//後端controller的URL
-					type:"POST",//用POST的方式
-					dataType: "text",
-					data: deleteProducts,
-					success:function(data){   //成功後回傳的資料data,目前沒用到不理他
-						console.log(data);
-						$("#cartNo").text(data);
-					},
-					error:function(err){ //發生伺服器404、500、304等錯誤時會用此function處理,err封裝錯誤訊息
-						console.log(err);
-					}
-				});
-				
-				$("#trIndex"+index).remove();
-			//按下修改or刪除時，重新載入此頁，更新購物車數量
-				$("#cartNo").load("");
-				return true;
-			}else{
-				return false;
-			}
-		})
-		
-// ==========================checkbox=================================		
-		$(".leaderCheckBox").change(function() {
-			 console.log(this.checked);
-			 if(this.checked) {
-		    	console.log("打勾囉!");
-		    	console.log(this);
-		    	$('.form-check-input').prop("checked",true);
-		    	$('.form-check-input').each(function(){
-		    		console.log($(this).val());
-		    	})
-		     }else{
-		    	  $('.form-check-input').prop("checked",false);
-		     }
-		});
-		
-		$(".form-check-input").change(function(){
-			if(this.checked){
-				console.log($(this).val());
-				console.log($(this).parents("tr[id*=trIndex]").index());
-			}
-		 })
-		 
-// 		刪除checkbox版 
-		$("#dd").click(function(){
-			var marKey = [] ;
-			var arrIndex = 0 ;
-			$('.form-check-input').each(function(index){
-				if(this.checked){
-					marKey[arrIndex]=$(this).val();
-					arrIndex++;
-				}
-	    	})
-			var deleteProducts = 
-			{
-				mapKey:JSON.stringify(marKey),
-				cmd   :"DEL",
-			}
-			
-			if(confirm("確定刪除此商品 ?") ) {
-				$.ajax({
-					url:"${pageContext.request.contextPath}/shoppingCart/shopCart",//後端controller的URL
-					type:"POST",//用POST的方式
-					dataType: "text",
-					data: deleteProducts,
-					success:function(data){   //成功後回傳的資料data,目前沒用到不理他
-// 						console.log(data);
-					},
-					error:function(err){ //發生伺服器404、500、304等錯誤時會用此function處理,err封裝錯誤訊息
-						console.log(err);
-					}
-				});
-				$("#cartNo").load("");
-			}else{
-				return false;
-			}			
-			
-			$(function(){
-				$("input[name*=doCheckbox]:checked").each(function(){
-					n = $(this).parents("tr").index(); //s獲得checkbox所在行順序
-					$("table#sc_table").find("tr:eq("+n+")").remove();
-				})
-			})
-		})
-	
-})
-</script>
 </html>
