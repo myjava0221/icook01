@@ -35,8 +35,11 @@ public class shoppingCartController {
 	@RequestMapping(value = "/ShoppingCar/OrderCheck", method = RequestMethod.GET)
 	public String SendOrder(HttpServletRequest request,
 			HttpServletResponse response,Model model) {
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession(false);
 		ShoppingCart cart = (ShoppingCart) session.getAttribute("ShoppingCart");
+		ShoppingCart cart2 =(ShoppingCart) session.getAttribute("ShoppingCart2");
+		System.out.println("cart:"+cart);
+		System.out.println("cart2:"+cart2);
 		List<orderDetail> list = new LinkedList<>();
 		int k=0;
 		for (Object key : cart.getContent().keySet()) {
@@ -47,6 +50,11 @@ public class shoppingCartController {
             list.add(k, ord);
             k++;
         }
+		
+//		將未check商品還原
+		cart.clearCart();
+		cart.getContent().putAll(cart2.getContent());
+		
 //		orderDetail ord1 = new orderDetail(null,null,1,"雞胸肉",5,60,"9.0000",1);
 //		orderDetail ord2 = new orderDetail(null,null,2,"平底鍋 紅色",2,500,null,2);
 //		orderDetail ord3 = new orderDetail(null,null,3,"高麗菜",10,100,"6.0000",3);

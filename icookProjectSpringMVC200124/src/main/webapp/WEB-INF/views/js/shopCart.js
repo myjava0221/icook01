@@ -198,18 +198,74 @@ $(document).ready(function() {
 		
 	})
 //==========================submit=================================	
-	
+//	確認表單提交
 	$("form").submit(function(eventData){
-//		  	eventData.preventDefault();//阻止form提交表單
-//		    alert("Submit prevented");
-			$("form[id=formSubmit]").attr("action",realPath+"/ShoppingCar/OrderCheck");
-		    console.log("=========>  "+eventData+"  <=========>");
-		  });
+		var count=0;
+		$(".fromCheck").each(function(){
+			if($(this).prop("checked")){
+				count++;
+			}
+		})
+		console.log("count:"+count);
+		if(count>0){
+			if(confirm("確定要購買這些商品 ?")){
+				checkOrder();
+			}else{eventData.preventDefault();}
+		}else{
+			eventData.preventDefault();//preventDefault():可阻止form提交表單
+			alert("請選擇要結帳的商品");
+		}
+	});
+	
+//	提交表單
+	function checkOrder(){
+		var index=0;
+		var mapKey =[];
+		var quantity =[];
+		var uncheckMapKey=[];
+		$(".fromCheck").each(function(){
+			index=$(this).parents("tr").index();
+			if($(this).prop("checked")){
+				mapKey.push($(this).val());
+				quantity.push($("#qty"+(index-1)).val());
+				console.log(index);
+			}else{
+				uncheckMapKey.push($(this).val());//沒有checked的
+			}
+		})
+		console.log("mapKey:"+mapKey);
+		console.log("mapKeyJson:"+JSON.stringify(mapKey));
+		console.log("uncheckMapKeyJson:"+JSON.stringify(uncheckMapKey));
+		console.log("quantityJson:"+JSON.stringify(quantity));
+		var updateProducts = 
+		{
+				mapKey:JSON.stringify(mapKey),
+				qty	  :JSON.stringify(quantity),
+	     uncheckMapKey:JSON.stringify(uncheckMapKey),
+				cmd   :"MOD2",
+		}			
+		$.ajax({
+			url:realPath+"/shoppingCart/shopCart",//後端controller的URL
+			type:"POST",//用POST的方式
+			dataType: "text",
+			data: updateProducts,
+			success:function(data){   //成功後回傳的資料data,目前沒用到不理他
+//				$("#cartNo").text(data);
+			},
+			error:function(err){ //發生伺服器404、500、304等錯誤時會用此function處理,err封裝錯誤訊息
+				console.log(err);
+			}
+		});			
+			$("form[id=formSubmit]").attr("action",realPath+"/ShoppingCar/OrderCheck");		
+	
+	}	
+	
 //	實驗map	
-    $("div[id=demo]").append( $("input[id*=qty]").map(function(){
-        return $(this).val();
-      }).get().join(",") );
-})
+//    $("div[id=demo]").append( $("input[id*=qty]").map(function(){
+//        return $(this).val();
+//      }).get().join(",") );
+
+
 
 //==========================table設定=================================	
 //$("table[class*=sc_table]").css("width", "992px");
@@ -222,3 +278,4 @@ $(document).ready(function() {
 
 
 
+})

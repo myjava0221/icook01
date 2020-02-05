@@ -42,12 +42,15 @@ public class ShoppingCart {
 	// 刪除某項商品
 	public int deleteProduct(String proId_typeId) {
 		if ( cart.get(proId_typeId) != null ) {
-	       cart.remove(proId_typeId);  // Map介面的remove()方法
-	       System.out.println("123");
+			cart.remove(proId_typeId);  // Map介面的remove()方法
 	       return 1;
 		} else {
 		   return 0;
 		}
+	}
+	
+	public void clearCart(){   // clear:清空Map
+		cart.clear();
 	}
 	
 	//購物車商品數量
