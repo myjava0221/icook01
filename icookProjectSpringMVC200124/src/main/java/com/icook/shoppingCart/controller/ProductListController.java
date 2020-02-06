@@ -250,6 +250,17 @@ public class ProductListController {
 			for(int del=0;del<mapKeyList.size();del++) {
 				cart2.deleteProduct(mapKeyList.get(del).trim());
 			}
+			// cart2修改uncheck商品數量
+			String uncheckQuantity = request.getParameter("uncheckQuantity");
+			List<String> uncheckQuantityList = gson.fromJson(uncheckQuantity, new TypeToken<List<String>>() {}.getType());	
+			String uncheckMapKey = request.getParameter("uncheckMapKey");
+			List<String> uncheckMapKeyList = gson.fromJson(uncheckMapKey, new TypeToken<List<String>>() {}.getType());
+			
+			for(int unq=0;unq<uncheckQuantityList.size();unq++) {
+				int uncheckQty = Integer.parseInt(uncheckQuantityList.get(unq).trim());
+				cart2.modifyQty(uncheckMapKeyList.get(unq).trim(), uncheckQty);
+			}
+			
 			// cart修改並保存check商品
 			String newQtyStr = request.getParameter("qty");
 			List<String> newQtyStrList = gson.fromJson(newQtyStr, new TypeToken<List<String>>() {}.getType());	
@@ -258,8 +269,7 @@ public class ProductListController {
 				cart.modifyQty(mapKeyList.get(m).trim(), newQty);
 			}
 			
-			String uncheckMapKey = request.getParameter("uncheckMapKey");
-			List<String> uncheckMapKeyList = gson.fromJson(uncheckMapKey, new TypeToken<List<String>>() {}.getType());
+
 			// cart刪除uncheck商品
 			for(int un=0;un<uncheckMapKeyList.size();un++) {
 				cart.deleteProduct(uncheckMapKeyList.get(un).trim());

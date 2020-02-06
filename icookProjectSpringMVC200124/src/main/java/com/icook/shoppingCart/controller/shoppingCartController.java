@@ -54,6 +54,7 @@ public class shoppingCartController {
 //		將未check商品還原
 		cart.clearCart();
 		cart.getContent().putAll(cart2.getContent());
+		cart2.clearCart();
 		
 //		orderDetail ord1 = new orderDetail(null,null,1,"雞胸肉",5,60,"9.0000",1);
 //		orderDetail ord2 = new orderDetail(null,null,2,"平底鍋 紅色",2,500,null,2);

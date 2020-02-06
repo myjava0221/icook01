@@ -210,6 +210,7 @@ $(document).ready(function() {
 		if(count>0){
 			if(confirm("確定要購買這些商品 ?")){
 				checkOrder();
+				$("form[id=formSubmit]").attr("action",realPath+"/ShoppingCar/OrderCheck");	
 			}else{eventData.preventDefault();}
 		}else{
 			eventData.preventDefault();//preventDefault():可阻止form提交表單
@@ -222,6 +223,7 @@ $(document).ready(function() {
 		var index=0;
 		var mapKey =[];
 		var quantity =[];
+		var uncheckQuantity =[];
 		var uncheckMapKey=[];
 		$(".fromCheck").each(function(){
 			index=$(this).parents("tr").index();
@@ -231,17 +233,20 @@ $(document).ready(function() {
 				console.log(index);
 			}else{
 				uncheckMapKey.push($(this).val());//沒有checked的
+				uncheckQuantity.push($("#qty"+(index-1)).val());
 			}
 		})
 		console.log("mapKey:"+mapKey);
 		console.log("mapKeyJson:"+JSON.stringify(mapKey));
 		console.log("uncheckMapKeyJson:"+JSON.stringify(uncheckMapKey));
 		console.log("quantityJson:"+JSON.stringify(quantity));
+		console.log("uncheckQuantity:"+JSON.stringify(uncheckQuantity));
 		var updateProducts = 
 		{
 				mapKey:JSON.stringify(mapKey),
 				qty	  :JSON.stringify(quantity),
 	     uncheckMapKey:JSON.stringify(uncheckMapKey),
+	   uncheckQuantity:JSON.stringify(uncheckQuantity),
 				cmd   :"MOD2",
 		}			
 		$.ajax({
@@ -256,8 +261,6 @@ $(document).ready(function() {
 				console.log(err);
 			}
 		});			
-			$("form[id=formSubmit]").attr("action",realPath+"/ShoppingCar/OrderCheck");		
-	
 	}	
 	
 //	實驗map	

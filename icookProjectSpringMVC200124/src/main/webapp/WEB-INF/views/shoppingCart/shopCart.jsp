@@ -75,8 +75,7 @@
 							<td id="subTotal${vs.index}" style="text-align:right;"><fmt:formatNumber pattern="#0"
 									value="${cart.value.unitPrice * cart.value.qty}"
 									type="currency" />元
-							<td><img name="cmd" class="MOD" id="MOD${vs.index}" width="24px" style="cursor:pointer;" src="${pageContext.request.contextPath}/images/edit.png"/>
-<%-- 							<td><button name="cmd" class="DEL" id="DEL${vs.index}"  value="DEL">刪除</button> --%>
+							<td><img name="cmd" class="MOD" id="MOD${vs.index}" width="24px" style="cursor:pointer;" src="${pageContext.request.contextPath}/images/save.png"/>
 							<td><img name="cmd" class="DEL" id="DEL${vs.index}" width="24px" style="cursor:pointer;" src="${pageContext.request.contextPath}/images/recycle_bin2.png"/>
 									<input type="hidden" id="mapKey${vs.index}" name="mapKey${vs.index}" value="${cart.key}"/>
 									<input type="hidden" id="listIndex${vs.index}" name="listIndex${vs.index}" value="${vs.index}" />
